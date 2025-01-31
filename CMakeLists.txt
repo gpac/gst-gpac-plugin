@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(gpac_plugin VERSION 0.1.0 LANGUAGES C) # x-release-please-version
+project(gpac_plugin VERSION 0.1.1 LANGUAGES C) # x-release-please-version
 
 # Options
 option(ENABLE_TESTS "Enable and build tests" OFF)
