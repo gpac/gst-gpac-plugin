@@ -1,0 +1,61 @@
+name: Tests
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # These steps install the dependencies needed for the build
+      - name: Install GPAC
+        shell: bash
+        working-directory: ${{ runner.temp }}
+        run: |
+          git clone --depth 1 https://github.com/gpac/gpac.git
+          cd gpac
+          ./configure && make -j
+          sudo make install
+
+      - name: Install GStreamer
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
+
+      # This step installs the Rust toolchain
+      - name: Install Rust
+        uses: actions-rust-lang/setup-rust-toolchain@11df97af8e8102fd60b60a77dfbf58d40cd843b8
+
+      # This step installs the dependencies needed for the tests
+      - name: Install cmafmux element
+        shell: bash
+        working-directory: ${{ runner.temp }}
+        run: |
+          git clone --depth 1 https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs.git
+          cd gst-plugins-rs
+          cargo install cargo-c
+          cargo cbuild -p gst-plugin-fmp4
+          cargo cinstall -p gst-plugin-fmp4 --destdir bin
+          install -Dm644 bin/usr/local/lib/x86_64-linux-gnu/gstreamer-1.0/libgstfmp4.so $HOME/.local/share/gstreamer-1.0/plugins
+
+      # This step builds the project.
+      - name: Build
+        shell: bash
+        run: |
+          cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DENABLE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -B build
+          cmake --build build -j
+
+      # Run the tests
+      - name: Test
+        shell: bash
+        working-directory: build/tests
+        run: ./gstgpacplugin_test

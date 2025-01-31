@@ -37,13 +37,9 @@ jobs:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
 
-        # These steps install the dependencies needed for the build
-      - if: matrix.build-mode == 'manual'
-        name: Install GStreamer
-        shell: bash
-        run: sudo apt-get install -y libgstreamer1.0-dev
-      - if: matrix.build-mode == 'manual'
-        name: Install GPAC
+      # These steps install the dependencies needed for the build
+      - name: Install GPAC
+        if: matrix.language == 'c-cpp'
         shell: bash
         working-directory: ${{ runner.temp }}
         run: |
@@ -52,15 +48,22 @@ jobs:
           ./configure && make -j
           sudo make install
 
-        # This step builds the project.
-      - if: matrix.build-mode == 'manual'
-        name: Build
+      - name: Install GStreamer
+        if: matrix.language == 'c-cpp'
         shell: bash
         run: |
-          cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -B build
+          sudo apt-get update
+          sudo apt-get install -y libgstreamer1.0-dev
+
+      # This step builds the project.
+      - name: Build
+        if: matrix.language == 'c-cpp'
+        shell: bash
+        run: |
+          cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release -B build
           cmake --build build -j
 
-        # This step performs the CodeQL analysis.
+      # This step performs the CodeQL analysis.
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
