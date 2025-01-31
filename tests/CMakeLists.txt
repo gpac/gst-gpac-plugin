@@ -15,8 +15,8 @@ endif()
 include(FetchContent)
 FetchContent_Declare(
   googletest
-  URL https://github.com/google/googletest/archive/2b6b042a77446ff322cd7522ca068d9f2a21c1d1.zip
-  DOWNLOAD_EXTRACT_TIMESTAMP
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG 2b6b042a77446ff322cd7522ca068d9f2a21c1d1
 )
 
 # For Windows: Prevent overriding the parent project's compiler/linker settings
