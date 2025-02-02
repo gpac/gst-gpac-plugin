@@ -34,7 +34,7 @@ extract_box_fourccs(GstBuffer* buffer,
 }
 
 void
-CheckSegmentInit(GstBuffer* buffer)
+IsSegmentInit(GstBuffer* buffer)
 {
   // It must only have the following flags
   EXPECT_TRUE(GST_BUFFER_FLAG_IS_SET(buffer, GST_BUFFER_FLAG_HEADER));
@@ -159,7 +159,7 @@ TEST_F(GstTestFixture, StructureTest)
 
         // Check buffer #0
         GET_NEXT_BUFFER();
-        CheckSegmentInit(buf);
+        IsSegmentInit(buf);
 
         if (is_cmaf)
           first_cmaf_buffer = false;
@@ -227,13 +227,18 @@ TEST_F(GstTestFixture, TimingTest)
       GstBuffer* cmaf_buf = gst_buffer_list_get(cmaf_buffer, idx);
       GstBuffer* gpacmp4mx_buf = gst_buffer_list_get(gpacmp4mx_buffer, idx);
 
-      // Check the CTS and DTS
+      // Check only the PTS
       EXPECT_EQ(GST_BUFFER_PTS(cmaf_buf), GST_BUFFER_PTS(gpacmp4mx_buf));
-      EXPECT_EQ(GST_BUFFER_DTS(cmaf_buf), GST_BUFFER_DTS(gpacmp4mx_buf));
 
-      // Check the duration
-      EXPECT_EQ(GST_BUFFER_DURATION(cmaf_buf),
-                GST_BUFFER_DURATION(gpacmp4mx_buf));
+      // The duration differs because, compared to cmafmux, we are
+      // outputting complete segments rather than dividing the mdat across
+      // individual buffers by samples.
+      if (!GST_BUFFER_FLAG_IS_SET(cmaf_buf, GST_BUFFER_FLAG_DELTA_UNIT)) {
+        EXPECT_EQ(GST_BUFFER_DURATION(cmaf_buf),
+                  GST_BUFFER_DURATION(gpacmp4mx_buf));
+      }
+
+      // For the same reason, the DTS is also not the same.
     }
 
 #undef GET_NEXT_BUFFER

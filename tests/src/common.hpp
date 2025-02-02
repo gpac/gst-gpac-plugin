@@ -7,27 +7,7 @@
 class GstAppSink
 {
 private:
-  std::mutex buffer_queue_mutex;
-  std::condition_variable buffer_queue_cv;
-  GQueue* buffer_queue;
   GstElement* appsink;
-
-protected:
-  static GstFlowReturn NewSample(GstElement* sink, GstAppSink* self)
-  {
-    GstSample* sample;
-    g_signal_emit_by_name(sink, "pull-sample", &sample);
-    if (sample == NULL)
-      return GST_FLOW_ERROR;
-
-    // Push the sample into the buffer queue
-    GstBufferList* buffer = gst_sample_get_buffer_list(sample);
-    gst_buffer_list_ref(buffer);
-    g_queue_push_tail(self->buffer_queue, buffer);
-    gst_sample_unref(sample);
-    self->buffer_queue_cv.notify_one();
-    return GST_FLOW_OK;
-  }
 
 public:
   GstAppSink(GstElement* test_element, GstElement* tee, GstElement* pipeline)
@@ -43,8 +23,6 @@ public:
     // Set the appsink properties
     g_object_set(
       appsink, "emit-signals", TRUE, "sync", FALSE, "buffer-list", TRUE, NULL);
-    g_signal_connect(appsink, "new-sample", G_CALLBACK(NewSample), this);
-    buffer_queue = g_queue_new();
 
     // Add the appsink to the test element
     gst_bin_add_many(GST_BIN(pipeline), queue, test_element, appsink, NULL);
@@ -60,33 +38,19 @@ public:
 
   GstBufferList* PopBuffer()
   {
-    // Wait until we have at least one buffer in the queue
-    std::unique_lock<std::mutex> lock(buffer_queue_mutex);
-    buffer_queue_cv.wait(lock, [&]() {
-      gboolean eos = false;
-      g_object_get(G_OBJECT(this->appsink), "eos", &eos, NULL);
-      if (eos)
-        return true;
-      return !g_queue_is_empty(this->buffer_queue);
-    });
+    GstSample* sample;
+    g_signal_emit_by_name(appsink, "pull-sample", &sample);
+    if (sample == NULL)
+      return NULL;
 
-    return (GstBufferList*)g_queue_pop_head(buffer_queue);
+    GstBufferList* buffer = gst_sample_get_buffer_list(sample);
+    gst_buffer_list_ref(buffer);
+    gst_sample_unref(sample);
+
+    return buffer;
   }
 
-  ~GstAppSink()
-  {
-    // Flush the buffer queue
-    while (!g_queue_is_empty(buffer_queue)) {
-      GstBufferList* buffer = (GstBufferList*)g_queue_pop_head(buffer_queue);
-      gst_buffer_list_unref(buffer);
-    }
-
-    // Free resources
-    gst_object_unref(appsink);
-    g_queue_free(buffer_queue);
-  }
-
-  int GetBufferCount() { return g_queue_get_length(buffer_queue); }
+  ~GstAppSink() { gst_object_unref(appsink); }
 };
 
 class GstTestFixture : public ::testing::Test
