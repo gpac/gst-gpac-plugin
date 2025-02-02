@@ -91,6 +91,16 @@ runs:
       if: inputs.for-test == 'true' && steps.cache-gst.outputs.cache-hit != 'true'
       uses: actions-rust-lang/setup-rust-toolchain@11df97af8e8102fd60b60a77dfbf58d40cd843b8
 
+    - name: Install cargo-c
+      if: inputs.for-test == 'true' && steps.cache-gst.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        if [[ ${{ runner.os }} == 'macOS' ]]; then
+          brew install cargo-c
+        else
+          cargo install cargo-c
+        fi
+
     - name: Clone gst-plugins-rs
       if: inputs.for-test == 'true' && steps.cache-gst.outputs.cache-hit != 'true'
       shell: bash
@@ -109,7 +119,6 @@ runs:
       shell: bash
       working-directory: ${{ runner.temp }}/gst-plugins-rs
       run: |
-        cargo install cargo-c
         cargo cbuild -p gst-plugin-fmp4
         cargo cinstall -p gst-plugin-fmp4 --destdir bin
 
