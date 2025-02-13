@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.3](https://github.com/gpac/gst-gpac-plugin/compare/v0.1.2...v0.1.3) (2025-02-13)
+
+
+### Bug Fixes
+
+* properly transition through states ([05c0c20](https://github.com/gpac/gst-gpac-plugin/commit/05c0c205954dbc89b605a4cd7122449d78361d17))
+* regression from 05c0c20 ([2ada29d](https://github.com/gpac/gst-gpac-plugin/commit/2ada29d9b5de223657c52918d88ddfcfa54e4755))
+
 ## [0.1.2](https://github.com/gpac/gst-gpac-plugin/compare/v0.1.1...v0.1.2) (2025-02-09)
 
 
