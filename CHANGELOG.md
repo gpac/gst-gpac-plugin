@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.3](https://github.com/gpac/gst-gpac-plugin/compare/v0.1.2...v0.1.3) (2025-02-20)
+
+
+### Features
+
+* add segment duration signaling ([13e7948](https://github.com/gpac/gst-gpac-plugin/commit/13e794845fe8d4e466019ca2bc9422c8472c485d))
+
+
+### Bug Fixes
+
+* correct argument allocation and NULL termination in gpac_apply_properties ([6a93ba7](https://github.com/gpac/gst-gpac-plugin/commit/6a93ba73f7daab51489bcc52b407f6759ac4f942))
+* deduplicate reconfigure requests ([a356f04](https://github.com/gpac/gst-gpac-plugin/commit/a356f0444316ee0cdc784522ab4a88f98e47a404))
+* properly transition through states ([05c0c20](https://github.com/gpac/gst-gpac-plugin/commit/05c0c205954dbc89b605a4cd7122449d78361d17))
+* regression from 05c0c20 ([2ada29d](https://github.com/gpac/gst-gpac-plugin/commit/2ada29d9b5de223657c52918d88ddfcfa54e4755))
+* wrong error handling on register ([ddfd148](https://github.com/gpac/gst-gpac-plugin/commit/ddfd148113f36f5c101a4c6c47e3b61cdc6276f2))
+
 ## [0.1.2](https://github.com/gpac/gst-gpac-plugin/compare/v0.1.1...v0.1.2) (2025-02-09)
 
 
