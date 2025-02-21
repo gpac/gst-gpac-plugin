@@ -89,6 +89,21 @@ typedef struct
   GstStaticCaps caption_caps;
 } GstGpacFormatProp;
 
+typedef enum
+{
+  TEMPLATE_VIDEO,
+  TEMPLATE_AUDIO,
+  TEMPLATE_SUBTITLE,
+  TEMPLATE_CAPTION,
+} GstGpacSinkTemplateType;
+
+/*! Get the sink pad template for the given type
+    \param[in] type the type of the sink pad template
+    \return the GstPadTemplate
+*/
+GstPadTemplate*
+gst_gpac_get_sink_template(GstGpacSinkTemplateType type);
+
 /*! Install the sink pad templates for the given element class
     \param[in] klass the element class to install the pad templates
 */

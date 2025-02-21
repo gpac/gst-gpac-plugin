@@ -32,14 +32,13 @@ GstGpacFormatProp gst_gpac_sink_formats = {
   .caption_caps = GST_STATIC_CAPS(CEA708_CAPS),
 };
 
-enum
-{
-  TEMPLATE_VIDEO,
-  TEMPLATE_AUDIO,
-  TEMPLATE_SUBTITLE,
-  TEMPLATE_CAPTION,
-};
 GstPadTemplate* sink_templates[4] = { NULL };
+
+GstPadTemplate*
+gst_gpac_get_sink_template(GstGpacSinkTemplateType type)
+{
+  return sink_templates[type];
+}
 
 void
 gpac_install_sink_pad_templates(GstElementClass* klass)

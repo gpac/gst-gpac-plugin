@@ -409,7 +409,13 @@ gst_gpac_tf_sink_event(GstAggregator* agg,
       priv->segment = gst_segment_copy(segment);
       priv->flags |= GPAC_PAD_SEGMENT_SET;
       priv->dts_offset_set = FALSE;
-      gst_aggregator_update_segment(agg, gst_segment_copy(segment));
+
+      // Update the segment only if video pad or the only pad
+      gboolean is_video_pad = gst_pad_get_pad_template(GST_PAD(pad)) ==
+                              gst_gpac_get_sink_template(TEMPLATE_VIDEO);
+      gboolean is_only_pad = g_list_length(GST_ELEMENT(agg)->sinkpads) == 1;
+      if (is_video_pad || is_only_pad)
+        gst_aggregator_update_segment(agg, gst_segment_copy(segment));
 
       // Set the global offset
       gpac_memio_set_global_offset(GPAC_SESS_CTX(GPAC_CTX), segment);
