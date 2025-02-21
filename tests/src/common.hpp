@@ -31,7 +31,7 @@ public:
 
     // Set the appsink properties
     g_object_set(
-      appsink, "emit-signals", TRUE, "sync", TRUE, "buffer-list", TRUE, NULL);
+      appsink, "emit-signals", TRUE, "sync", FALSE, "buffer-list", TRUE, NULL);
 
     // Add the appsink to the test element
     gst_bin_add_many(GST_BIN(pipeline), queue, test_element, appsink, NULL);
@@ -60,6 +60,8 @@ public:
   }
 
   ~GstAppSink() { gst_object_unref(appsink); }
+
+  void SetSync(bool sync) { g_object_set(appsink, "sync", sync, NULL); }
 };
 
 class GstTestFixture : public ::testing::Test
@@ -78,11 +80,12 @@ protected:
   static void TearDownTestSuite() { gst_deinit(); }
   GstElement* GetLastElement() { return last_element; }
   GstElement* GetEncoder() { return encoder; }
+  void SetLive(bool is_live) { g_object_set(source, "is-live", is_live, NULL); }
 
   void SetUp() override
   {
-    source =
-      gst_element_factory_make_full("videotestsrc", "do-timestamp", TRUE, "is-live", TRUE, NULL);
+    source = gst_element_factory_make_full(
+      "videotestsrc", "do-timestamp", TRUE, "is-live", FALSE, NULL);
     GstElement* capsfilter = gst_element_factory_make_full(
       "capsfilter",
       "caps",
