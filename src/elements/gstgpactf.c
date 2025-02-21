@@ -583,26 +583,10 @@ gst_gpac_tf_aggregate(GstAggregator* agg, gboolean timeout)
 
 // #MARK: Pad Management
 static GstAggregatorPad*
-gst_gpac_tf_create_new_pad(GstAggregator* self,
+gst_gpac_tf_create_new_pad(GstAggregator* element,
                            GstPadTemplate* templ,
-                           const gchar* req_name,
+                           const gchar* pad_name,
                            const GstCaps* caps)
-{
-  return g_object_new(GST_TYPE_GPAC_TF_PAD,
-                      "name",
-                      req_name,
-                      "direction",
-                      templ->direction,
-                      "template",
-                      templ,
-                      NULL);
-}
-
-static GstPad*
-gst_gpac_tf_request_new_pad(GstElement* element,
-                            GstPadTemplate* templ,
-                            const gchar* pad_name,
-                            const GstCaps* caps)
 {
   GstElementClass* klass = GST_ELEMENT_GET_CLASS(element);
   GstGpacTransform* agg = GST_GPAC_TF(element);
@@ -634,9 +618,14 @@ gst_gpac_tf_request_new_pad(GstElement* element,
   GST_DEBUG_OBJECT(agg, "Creating new pad %s", name);
 
   // Create the pad
-  GstGpacTransformPad* pad =
-    (GstGpacTransformPad*)GST_ELEMENT_CLASS(parent_class)
-      ->request_new_pad(element, templ, name, caps);
+  GstGpacTransformPad* pad = g_object_new(GST_TYPE_GPAC_TF_PAD,
+                                          "name",
+                                          name,
+                                          "direction",
+                                          templ->direction,
+                                          "template",
+                                          templ,
+                                          NULL);
   g_free(name);
 
   // Initialize the private data
@@ -646,14 +635,7 @@ gst_gpac_tf_request_new_pad(GstElement* element,
     priv->flags |= GPAC_PAD_CAPS_SET;
   }
 
-  return GST_PAD(pad);
-}
-
-static void
-gst_gpac_tf_release_pad(GstElement* element, GstPad* pad)
-{
-  GST_DEBUG_OBJECT(element, "Releasing pad %s:%s", GST_DEBUG_PAD_NAME(pad));
-  GST_ELEMENT_CLASS(parent_class)->release_pad(element, pad);
+  return GST_AGGREGATOR_PAD(pad);
 }
 
 // #MARK: Lifecycle
@@ -862,9 +844,9 @@ gst_gpac_tf_class_init(GstGpacTransformClass* klass)
   // Set the pad management functions
   gstaggregator_class->create_new_pad =
     GST_DEBUG_FUNCPTR(gst_gpac_tf_create_new_pad);
-  gstelement_class->request_new_pad =
-    GST_DEBUG_FUNCPTR(gst_gpac_tf_request_new_pad);
-  gstelement_class->release_pad = GST_DEBUG_FUNCPTR(gst_gpac_tf_release_pad);
+  // gstelement_class->request_new_pad =
+  // GST_DEBUG_FUNCPTR(gst_gpac_tf_request_new_pad);
+  // gstelement_class->release_pad = GST_DEBUG_FUNCPTR(gst_gpac_tf_release_pad);
 
   // Set the aggregator functions
   gstaggregator_class->sink_event = GST_DEBUG_FUNCPTR(gst_gpac_tf_sink_event);

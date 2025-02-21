@@ -82,7 +82,7 @@ protected:
   void SetUp() override
   {
     source =
-      gst_element_factory_make_full("videotestsrc", "do-timestamp", TRUE, NULL);
+      gst_element_factory_make_full("videotestsrc", "do-timestamp", TRUE, "is-live", TRUE, NULL);
     GstElement* capsfilter = gst_element_factory_make_full(
       "capsfilter",
       "caps",
