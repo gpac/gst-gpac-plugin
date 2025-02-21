@@ -40,6 +40,9 @@ IsSegmentInit(GstBuffer* buffer)
   EXPECT_TRUE(GST_BUFFER_FLAG_IS_SET(buffer, GST_BUFFER_FLAG_HEADER));
   EXPECT_TRUE(GST_BUFFER_FLAG_IS_SET(buffer, GST_BUFFER_FLAG_DISCONT));
 
+  // This is not a delta unit
+  EXPECT_FALSE(GST_BUFFER_FLAG_IS_SET(buffer, GST_BUFFER_FLAG_DELTA_UNIT));
+
   // It must contain also contain at least "ftyp" and "moov" boxes
   std::vector<fourcc_t> fourccs;
   extract_box_fourccs(buffer, fourccs);

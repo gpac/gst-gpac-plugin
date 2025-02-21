@@ -318,7 +318,8 @@ gst_gpac_tf_consume(GstAggregator* agg, Bool is_eos)
         // memout is not connected, just send one dummy buffer
         if (is_eos)
           return GST_FLOW_EOS;
-        GST_DEBUG_OBJECT(agg, "Sending dummy buffer, shouldn't happen!");
+        GST_DEBUG_OBJECT(
+          agg, "Sending dummy buffer, possibly connected to fakesink");
         return gst_aggregator_finish_buffer(agg, gst_buffer_new());
 
       case GPAC_FILTER_PP_RET_BUFFER:
@@ -795,6 +796,7 @@ gst_gpac_tf_start(GstAggregator* aggregator)
   }
   GST_DEBUG_OBJECT(element, "GPAC session started");
 
+  // Initialize the segment
   gst_segment_init(&segment, GST_FORMAT_TIME);
   gst_aggregator_update_segment(aggregator, &segment);
   return TRUE;

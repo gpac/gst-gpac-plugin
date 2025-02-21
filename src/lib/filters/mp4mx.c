@@ -282,11 +282,13 @@ mp4mx_create_buffer_list(GF_Filter* filter)
       case INIT:
         if (!GET_TYPE(INIT)->is_complete)
           break;
+        GST_BUFFER_FLAG_SET(GET_TYPE(type)->buffer, GST_BUFFER_FLAG_HEADER);
+
         if (mp4mx_ctx->segment_count == 0) {
           GST_BUFFER_FLAG_SET(GET_TYPE(type)->buffer, GST_BUFFER_FLAG_DISCONT);
           ctx->is_continuous = TRUE;
         }
-        // fallthrough
+        break;
       case HEADER:
         GST_BUFFER_FLAG_SET(GET_TYPE(type)->buffer, GST_BUFFER_FLAG_HEADER);
 
@@ -322,7 +324,7 @@ mp4mx_create_buffer_list(GF_Filter* filter)
     GST_BUFFER_DTS(GET_TYPE(INIT)->buffer) =
       GST_BUFFER_DTS(GET_TYPE(HEADER)->buffer) -
       GST_BUFFER_DURATION(GET_TYPE(HEADER)->buffer);
-    GST_BUFFER_DURATION(GET_TYPE(INIT)->buffer) = 0;
+    GST_BUFFER_DURATION(GET_TYPE(INIT)->buffer) = GST_CLOCK_TIME_NONE;
   }
 
   // Copy the mdat header
