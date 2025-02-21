@@ -152,6 +152,9 @@ gst_gpac_tf_set_property(GObject* object,
       case GPAC_PROP_SEGDUR:
         gpac_tf->global_idr_period =
           ((guint64)g_value_get_float(value)) * GST_SECOND;
+        GST_DEBUG_OBJECT(object,
+                         "Set global IDR period to %" GST_TIME_FORMAT,
+                         GST_TIME_ARGS(gpac_tf->global_idr_period));
         break;
 
       default:
@@ -294,6 +297,7 @@ gst_gpac_tf_consume(GstAggregator* agg, Bool is_eos)
 {
   GstFlowReturn flow_ret = GST_FLOW_OK;
   GstGpacTransform* gpac_tf = GST_GPAC_TF(agg);
+  GstSegment* segment = &GST_AGGREGATOR_PAD(agg->srcpad)->segment;
 
   GST_DEBUG_OBJECT(agg, "Consuming output...");
 
@@ -327,8 +331,29 @@ gst_gpac_tf_consume(GstAggregator* agg, Bool is_eos)
       case GPAC_FILTER_PP_RET_BUFFER_LIST:
         // Send the buffer list
         GST_DEBUG_OBJECT(agg, "Sending buffer list");
-        flow_ret =
-          gst_aggregator_finish_buffer_list(agg, GST_BUFFER_LIST(output));
+        GstBufferList* buffer_list = GST_BUFFER_LIST(output);
+        // Show in debug the buffer list pts and dts (running time) and flags
+        for (guint i = 0; i < gst_buffer_list_length(buffer_list); i++) {
+          GstBuffer* buffer = gst_buffer_list_get(buffer_list, i);
+          // Calculate pts and dts in running time
+          guint64 pts = gst_segment_to_running_time(
+            segment, GST_FORMAT_TIME, GST_BUFFER_PTS(buffer));
+          guint64 dts = gst_segment_to_running_time(
+            segment, GST_FORMAT_TIME, GST_BUFFER_DTS(buffer));
+          guint64 duration = gst_segment_to_running_time(
+            segment, GST_FORMAT_TIME, GST_BUFFER_DURATION(buffer));
+          GST_DEBUG_OBJECT(
+            agg,
+            "Buffer %d: PTS: %" GST_TIME_FORMAT ", DTS: %" GST_TIME_FORMAT
+            ", Duration: %" GST_TIME_FORMAT ", IsHeader: %s",
+            i,
+            GST_TIME_ARGS(pts),
+            GST_TIME_ARGS(dts),
+            GST_TIME_ARGS(duration),
+            GST_BUFFER_FLAG_IS_SET(buffer, GST_BUFFER_FLAG_HEADER) ? "Yes"
+                                                                   : "No");
+        }
+        flow_ret = gst_aggregator_finish_buffer_list(agg, buffer_list);
         GST_DEBUG_OBJECT(agg, "Buffer list sent!");
         break;
 
@@ -383,6 +408,7 @@ gst_gpac_tf_sink_event(GstAggregator* agg,
       priv->segment = gst_segment_copy(segment);
       priv->flags |= GPAC_PAD_SEGMENT_SET;
       priv->dts_offset_set = FALSE;
+      gst_aggregator_update_segment(agg, gst_segment_copy(segment));
 
       // Set the global offset
       gpac_memio_set_global_offset(GPAC_SESS_CTX(GPAC_CTX), segment);
@@ -696,6 +722,7 @@ gst_gpac_tf_start(GstAggregator* aggregator)
   GObjectClass* klass = G_OBJECT_CLASS(G_TYPE_INSTANCE_GET_CLASS(
     G_OBJECT(element), GST_TYPE_GPAC_TF, GstGpacTransformClass));
   GstGpacTransformParams* params = GST_GPAC_TF_GET_PARAMS(klass);
+  GstSegment segment;
 
   // Check if we have the graph property set
   if (!params->is_single && !GPAC_PROP_CTX(GPAC_CTX)->graph) {
@@ -766,6 +793,10 @@ gst_gpac_tf_start(GstAggregator* aggregator)
       element, LIBRARY, FAILED, (NULL), ("Failed to prepare PIDs"));
     return FALSE;
   }
+  GST_DEBUG_OBJECT(element, "GPAC session started");
+
+  gst_segment_init(&segment, GST_FORMAT_TIME);
+  gst_aggregator_update_segment(aggregator, &segment);
   return TRUE;
 }
 
@@ -791,6 +822,7 @@ gst_gpac_tf_stop(GstAggregator* aggregator)
 
   // Destroy the GPAC context
   gpac_destroy(GPAC_CTX);
+  GST_DEBUG_OBJECT(element, "GPAC session stopped");
   return TRUE;
 }
 

@@ -322,7 +322,7 @@ mp4mx_create_buffer_list(GF_Filter* filter)
     GST_BUFFER_DTS(GET_TYPE(INIT)->buffer) =
       GST_BUFFER_DTS(GET_TYPE(HEADER)->buffer) -
       GST_BUFFER_DURATION(GET_TYPE(HEADER)->buffer);
-    GST_BUFFER_DURATION(GET_TYPE(INIT)->buffer) = GST_CLOCK_TIME_NONE;
+    GST_BUFFER_DURATION(GET_TYPE(INIT)->buffer) = 0;
   }
 
   // Copy the mdat header

@@ -31,7 +31,7 @@ public:
 
     // Set the appsink properties
     g_object_set(
-      appsink, "emit-signals", TRUE, "sync", FALSE, "buffer-list", TRUE, NULL);
+      appsink, "emit-signals", TRUE, "sync", TRUE, "buffer-list", TRUE, NULL);
 
     // Add the appsink to the test element
     gst_bin_add_many(GST_BIN(pipeline), queue, test_element, appsink, NULL);
