@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.2.0](https://github.com/gpac/gst-gpac-plugin/compare/v0.1.2...v0.2.0) (2025-02-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* rename `gpacmp4mx` to `gpaccmafmux`
+
+### Features
+
+* add segment duration signaling ([13e7948](https://github.com/gpac/gst-gpac-plugin/commit/13e794845fe8d4e466019ca2bc9422c8472c485d))
+* allow overriding default options for single filters ([9a55973](https://github.com/gpac/gst-gpac-plugin/commit/9a5597393dfac4fa6f953b3caadac198da754e90))
+* rename `gpacmp4mx` to `gpaccmafmux` ([54280a6](https://github.com/gpac/gst-gpac-plugin/commit/54280a616dbfffaa4304dcdca0e1165ea72fc3df))
+
+
+### Bug Fixes
+
+* correct argument allocation and NULL termination in gpac_apply_properties ([6a93ba7](https://github.com/gpac/gst-gpac-plugin/commit/6a93ba73f7daab51489bcc52b407f6759ac4f942))
+* deduplicate reconfigure requests ([a356f04](https://github.com/gpac/gst-gpac-plugin/commit/a356f0444316ee0cdc784522ab4a88f98e47a404))
+* handle live input properly ([#5](https://github.com/gpac/gst-gpac-plugin/issues/5)) ([ba378b2](https://github.com/gpac/gst-gpac-plugin/commit/ba378b258ac733859792f734a06cf2d21b714d9c))
+* more robust idr requests ([5e5da91](https://github.com/gpac/gst-gpac-plugin/commit/5e5da9128c87258c60e745f52aa47f47db626a2c))
+* properly transition through states ([05c0c20](https://github.com/gpac/gst-gpac-plugin/commit/05c0c205954dbc89b605a4cd7122449d78361d17))
+* regression from 05c0c20 ([2ada29d](https://github.com/gpac/gst-gpac-plugin/commit/2ada29d9b5de223657c52918d88ddfcfa54e4755))
+* regression from 5e5da91 ([5727042](https://github.com/gpac/gst-gpac-plugin/commit/57270422f2940cf6d91f6cea833355da0874fb76))
+* wrong error handling on register ([ddfd148](https://github.com/gpac/gst-gpac-plugin/commit/ddfd148113f36f5c101a4c6c47e3b61cdc6276f2))
+
 ## [0.1.2](https://github.com/gpac/gst-gpac-plugin/compare/v0.1.1...v0.1.2) (2025-02-09)
 
 
