@@ -123,6 +123,7 @@ storing the last `id` in a global context.
 // Property handler declarations
 //
 GPAC_PROP_IMPL_DECL_BUNDLE_CAPS(stream_type)
+GPAC_PROP_IMPL_DECL_BUNDLE_CAPS(mime)
 GPAC_PROP_IMPL_DECL_BUNDLE_TAGS(id)
 GPAC_PROP_IMPL_DECL_BUNDLE_CAPS(codec_id)
 GPAC_PROP_IMPL_DECL_BUNDLE_CAPS(unframed)
@@ -160,6 +161,7 @@ typedef struct
 
 static prop_registry_entry prop_registry[] = {
   GPAC_PROP_DEFINE_CAPS(GF_PROP_PID_STREAM_TYPE, stream_type),
+  GPAC_PROP_DEFINE_CAPS(GF_PROP_PID_MIME, mime),
   GPAC_PROP_DEFINE_TAGS(GF_PROP_PID_ID, id),
   GPAC_PROP_DEFINE_CAPS(GF_PROP_PID_CODECID, codec_id),
   GPAC_PROP_DEFINE_CAPS(GF_PROP_PID_UNFRAMED, unframed),

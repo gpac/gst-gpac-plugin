@@ -76,6 +76,10 @@
 #define CEA708_CAPS \
   "closedcaption/x-cea-708, format=(string)cdp"
 
+#define MPEGTS_CAPS \
+  "video/mpegts, " \
+  "systemstream = (boolean) true"
+
 #define QT_CAPS "video/quicktime"
 
 #define QT_CMAF_CAPS \
@@ -85,6 +89,7 @@
 
 typedef struct
 {
+  GstStaticCaps container_caps;
   GstStaticCaps video_caps;
   GstStaticCaps audio_caps;
   GstStaticCaps subtitle_caps;
@@ -93,6 +98,7 @@ typedef struct
 
 typedef enum
 {
+  TEMPLATE_CONTAINER,
   TEMPLATE_VIDEO,
   TEMPLATE_AUDIO,
   TEMPLATE_SUBTITLE,

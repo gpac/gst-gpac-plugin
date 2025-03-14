@@ -60,6 +60,7 @@ struct _GstGpacTransform
   guint64 gpac_idr_period;
 
   /* General Pad Information */
+  guint32 container_pad_count;
   guint32 video_pad_count;
   guint32 audio_pad_count;
   guint32 subtitle_pad_count;

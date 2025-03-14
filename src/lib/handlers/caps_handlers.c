@@ -25,6 +25,7 @@
 
 #include "common.h"
 #include "gpacmessages.h"
+#include "lib/caps.h"
 #include "lib/pid.h"
 
 #define CAPS_HANDLER_SIGNATURE(prop_nickname)                \
@@ -35,6 +36,11 @@
   {                                                          \
     return FALSE;                                            \
   }
+
+#define SKIP_IF_CONTAINER                                          \
+  GstPadTemplate* template = gst_pad_get_pad_template(priv->self); \
+  if (gst_gpac_get_sink_template(TEMPLATE_CONTAINER) == template)  \
+    return TRUE;
 
 #define GET_MEDIA_AND_CODEC                                             \
   GstStructure* structure = gst_caps_get_structure(priv->caps, 0);      \
@@ -54,6 +60,13 @@ DEFAULT_HANDLER(duration)
 CAPS_HANDLER_SIGNATURE(stream_type)
 {
   GET_MEDIA_AND_CODEC
+
+  // If container pad, set the stream type to file
+  GstPadTemplate* template = gst_pad_get_pad_template(priv->self);
+  if (gst_gpac_get_sink_template(TEMPLATE_CONTAINER) == template) {
+    SET_PROP(GF_PROP_PID_STREAM_TYPE, PROP_UINT(GF_STREAM_FILE));
+    return TRUE;
+  }
 
   // Get the stream type
   u32 stream_type = gf_stream_type_by_name(media);
@@ -75,9 +88,31 @@ CAPS_HANDLER_SIGNATURE(stream_type)
   return TRUE;
 }
 
+CAPS_HANDLER_SIGNATURE(mime)
+{
+  GET_MEDIA_AND_CODEC
+
+  // If not container pad, skip
+  GstPadTemplate* template = gst_pad_get_pad_template(priv->self);
+  if (gst_gpac_get_sink_template(TEMPLATE_CONTAINER) != template)
+    return TRUE;
+
+#define MIME_MAP(gst_media, gst_codec, gf_mime)                       \
+  if (!g_strcmp0(media, gst_media) && !g_strcmp0(codec, gst_codec)) { \
+    SET_PROP(GF_PROP_PID_MIME, PROP_STRING(gf_mime));                 \
+    return TRUE;                                                      \
+  }
+
+  MIME_MAP("video", "mpegts", "video/mpeg-2");
+
+#undef MIME_MAP
+  return FALSE;
+}
+
 CAPS_HANDLER_SIGNATURE(codec_id)
 {
   GET_MEDIA_AND_CODEC
+  SKIP_IF_CONTAINER
   GF_CodecID codec_id = GF_CODECID_NONE;
 
   // In most cases the substring after "x-" can be used to query the codec id
@@ -113,6 +148,7 @@ finish:
 CAPS_HANDLER_SIGNATURE(unframed)
 {
   GET_MEDIA_AND_CODEC
+  SKIP_IF_CONTAINER
 
   const gchar* stream_format =
     gst_structure_get_string(structure, "stream-format");
@@ -151,6 +187,7 @@ CAPS_HANDLER_SIGNATURE(unframed)
 CAPS_HANDLER_SIGNATURE(width)
 {
   GET_MEDIA_AND_CODEC
+  SKIP_IF_CONTAINER
 
   // Only process video media
   if (g_strcmp0(media, "video"))
@@ -171,6 +208,7 @@ CAPS_HANDLER_SIGNATURE(width)
 CAPS_HANDLER_SIGNATURE(height)
 {
   GET_MEDIA_AND_CODEC
+  SKIP_IF_CONTAINER
 
   // Only process video media
   if (g_strcmp0(media, "video"))

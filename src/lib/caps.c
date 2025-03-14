@@ -26,13 +26,14 @@
 #include "lib/caps.h"
 
 GstGpacFormatProp gst_gpac_sink_formats = {
+  .container_caps = GST_STATIC_CAPS(MPEGTS_CAPS "; " QT_CAPS),
   .video_caps = GST_STATIC_CAPS(AV1_CAPS "; " H264_CAPS "; " H265_CAPS),
   .audio_caps = GST_STATIC_CAPS(AAC_CAPS "; " EAC3_CAPS),
   .subtitle_caps = GST_STATIC_CAPS(TEXT_UTF8),
   .caption_caps = GST_STATIC_CAPS(CEA708_CAPS),
 };
 
-GstPadTemplate* sink_templates[4] = { NULL };
+GstPadTemplate* sink_templates[5] = { NULL };
 
 GstPadTemplate*
 gst_gpac_get_sink_template(GstGpacSinkTemplateType type)
@@ -43,6 +44,16 @@ gst_gpac_get_sink_template(GstGpacSinkTemplateType type)
 void
 gpac_install_sink_pad_templates(GstElementClass* klass)
 {
+  // Container pad template
+  if (sink_templates[TEMPLATE_CONTAINER] == NULL) {
+    sink_templates[TEMPLATE_CONTAINER] = gst_pad_template_new(
+      "container_%u",
+      GST_PAD_SINK,
+      GST_PAD_REQUEST,
+      gst_static_caps_get(&gst_gpac_sink_formats.container_caps));
+  }
+  gst_element_class_add_pad_template(klass, sink_templates[TEMPLATE_CONTAINER]);
+
   // Video pad template
   if (sink_templates[TEMPLATE_VIDEO] == NULL) {
     sink_templates[TEMPLATE_VIDEO] = gst_pad_template_new(

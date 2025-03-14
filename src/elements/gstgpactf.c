@@ -709,6 +709,7 @@ gst_gpac_tf_create_new_pad(GstAggregator* element,
   } else
 
   // Check the pad template and decide the pad name
+  TEMPLATE_CHECK("container", container_pad_count)
   TEMPLATE_CHECK("video", video_pad_count)
   TEMPLATE_CHECK("audio", audio_pad_count)
   TEMPLATE_CHECK("subtitle", subtitle_pad_count)
