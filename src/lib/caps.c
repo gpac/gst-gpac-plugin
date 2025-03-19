@@ -95,16 +95,35 @@ gpac_install_sink_pad_templates(GstElementClass* klass)
   gst_element_class_add_pad_template(klass, sink_templates[TEMPLATE_CAPTION]);
 }
 
-GstStaticPadTemplate gst_gpac_src_template =
-  GST_STATIC_PAD_TEMPLATE("src",
-                          GST_PAD_SRC,
-                          GST_PAD_ALWAYS,
-                          GST_STATIC_CAPS(QT_CAPS));
-
 void
 gpac_install_src_pad_templates(GstElementClass* klass)
 {
-  gst_element_class_add_static_pad_template(klass, &gst_gpac_src_template);
+  GstPadTemplate* src_template = gst_pad_template_new(
+    "src",
+    GST_PAD_SRC,
+    GST_PAD_ALWAYS,
+    gst_static_caps_get(&gst_gpac_sink_formats.container_caps));
+  gst_element_class_add_pad_template(klass, src_template);
+}
+
+gchar*
+gpac_gst_to_gf_mime(GstCaps* caps)
+{
+  GstStructure* structure = gst_caps_get_structure(caps, 0);
+  const gchar* media_type_full = gst_structure_get_name(structure);
+  g_auto(GStrv) media_type_parts = g_strsplit(media_type_full, "/", 2);
+  gchar* media = media_type_parts[0];
+  gchar* codec = media_type_parts[1];
+
+#define MIME_MAP(gst_media, gst_codec, gf_mime)                     \
+  if (!g_strcmp0(media, gst_media) && !g_strcmp0(codec, gst_codec)) \
+    return gf_mime;
+
+  MIME_MAP("video", "mpegts", "video/mpeg-2");
+  MIME_MAP("video", "quicktime", "video/quicktime");
+
+#undef MIME_MAP
+  return NULL;
 }
 
 GF_FilterCapability*
@@ -119,7 +138,6 @@ gpac_gstcaps_to_gfcaps(GstCaps* caps, guint* nb_caps)
     return NULL;
   } else if (gst_caps_get_size(caps) > 1)
     GST_WARNING("Multiple structures in caps, will only use the first one");
-  GstStructure* structure = gst_caps_get_structure(caps, 0);
 
   /**
    * Currently, we only support file output stream. Therefore, we only need to
@@ -141,7 +159,7 @@ gpac_gstcaps_to_gfcaps(GstCaps* caps, guint* nb_caps)
   // Set the mime type
   gf_caps[1].code = GF_PROP_PID_MIME;
   gf_caps[1].val.type = GF_PROP_STRING;
-  gf_caps[1].val.value.string = g_strdup(gst_structure_get_name(structure));
+  gf_caps[1].val.value.string = gpac_gst_to_gf_mime(caps);
   gf_caps[1].flags = GF_CAPS_INPUT;
 
   return gf_caps;

@@ -50,13 +50,14 @@
   gchar* codec = media_type_parts[1];
 
 //
-// Default Caps handlers
-//
-DEFAULT_HANDLER(duration)
-
-//
 // Caps handlers
 //
+CAPS_HANDLER_SIGNATURE(duration)
+{
+  SKIP_IF_CONTAINER
+  return FALSE;
+}
+
 CAPS_HANDLER_SIGNATURE(stream_type)
 {
   GET_MEDIA_AND_CODEC
@@ -90,22 +91,17 @@ CAPS_HANDLER_SIGNATURE(stream_type)
 
 CAPS_HANDLER_SIGNATURE(mime)
 {
-  GET_MEDIA_AND_CODEC
-
   // If not container pad, skip
   GstPadTemplate* template = gst_pad_get_pad_template(priv->self);
   if (gst_gpac_get_sink_template(TEMPLATE_CONTAINER) != template)
     return TRUE;
 
-#define MIME_MAP(gst_media, gst_codec, gf_mime)                       \
-  if (!g_strcmp0(media, gst_media) && !g_strcmp0(codec, gst_codec)) { \
-    SET_PROP(GF_PROP_PID_MIME, PROP_STRING(gf_mime));                 \
-    return TRUE;                                                      \
+  const gchar* gf_mime = gpac_gst_to_gf_mime(priv->caps);
+  if (gf_mime) {
+    SET_PROP(GF_PROP_PID_MIME, PROP_STRING(gf_mime));
+    return TRUE;
   }
 
-  MIME_MAP("video", "mpegts", "video/mpeg-2");
-
-#undef MIME_MAP
   return FALSE;
 }
 

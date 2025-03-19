@@ -124,6 +124,13 @@ gpac_install_sink_pad_templates(GstElementClass* klass);
 void
 gpac_install_src_pad_templates(GstElementClass* klass);
 
+/*! Convert a GstCaps to a gpac MIME type
+    \param[in] caps the GstCaps to convert
+    \return the gpac MIME type
+*/
+gchar*
+gpac_gst_to_gf_mime(GstCaps* caps);
+
 /*! Convert a GstCaps to a GF_FilterCapability array
     \param[in] caps the GstCaps to convert
     \param[out] nb_caps the number of capabilities in the returned array
