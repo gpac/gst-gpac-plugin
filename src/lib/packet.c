@@ -23,6 +23,7 @@
  *
  */
 #include "lib/packet.h"
+#include "lib/caps.h"
 
 static void
 gpac_pck_destructor(GF_Filter* filter, GF_FilterPid* PID, GF_FilterPacket* pck)
@@ -43,6 +44,16 @@ gpac_pck_get_stream_time(GstClockTime time,
   GstElement* element = gst_pad_get_parent_element(priv->self);
   if (!GST_CLOCK_TIME_IS_VALID(time))
     goto fail;
+
+  // For container pads, we don't need to convert the time
+  GstPadTemplate* template = gst_pad_get_pad_template(priv->self);
+  if (gst_gpac_get_sink_template(TEMPLATE_CONTAINER) == template) {
+    if (is_dts && !priv->dts_offset_set) {
+      priv->dts_offset = 0;
+      priv->dts_offset_set = TRUE;
+    }
+    return time;
+  }
 
   guint64 unsigned_time;
   int ret = gst_segment_to_stream_time_full(
