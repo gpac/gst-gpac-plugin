@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.2.1](https://github.com/gpac/gst-gpac-plugin/compare/v0.2.0...v0.2.1) (2025-04-16)
+
+
+### Features
+
+* add `m2tsmx` filter subelement ([803fbec](https://github.com/gpac/gst-gpac-plugin/commit/803fbec07abd91a24bf50d8f6b54ec33917d2a8d))
+* slice data buffer into individual samples for fMP4 ([ea3c003](https://github.com/gpac/gst-gpac-plugin/commit/ea3c003cca94e0f9e38b520c9ac0b75941b2f8f7))
+
+
+### Bug Fixes
+
+* handle multiple sink pads correctly ([17f8a18](https://github.com/gpac/gst-gpac-plugin/commit/17f8a183f58a369562cf9470f5c479d9e2aecd80))
+* handle non-fragmented mp4 ([b55c6c0](https://github.com/gpac/gst-gpac-plugin/commit/b55c6c09f076e4e9a325a301f4af1f38e14c3285))
+* set dsi once ([e74057a](https://github.com/gpac/gst-gpac-plugin/commit/e74057a53b6e8b3fd3c2310500e5c88640f7c010))
+* update debug logging format for sample size in mp4mx ([5df7609](https://github.com/gpac/gst-gpac-plugin/commit/5df7609ae3582c51bdc3a90a81d66875f8e44562))
+
 ## [0.2.0](https://github.com/gpac/gst-gpac-plugin/compare/v0.1.2...v0.2.0) (2025-02-22)
 
 
