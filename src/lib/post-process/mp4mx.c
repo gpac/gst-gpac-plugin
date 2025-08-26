@@ -89,7 +89,7 @@ typedef struct
 typedef struct
 {
   gboolean is_sync;
-  guint64 size;
+  gssize size;
   guint64 pts;
   guint64 dts;
   guint64 duration;
@@ -670,7 +670,7 @@ mp4mx_create_buffer_list(GF_Filter* filter, GF_FilterPid* pid)
   gst_buffer_resize(GET_TYPE(DATA)->buffer, 8, -1);
 
   // Go through all samples
-  gsize data_offset = 0;
+  gssize data_offset = 0;
   for (guint s = 0; s < mp4mx_ctx->next_samples->len; s++) {
     SampleInfo* sample = &g_array_index(mp4mx_ctx->next_samples, SampleInfo, s);
 
@@ -678,19 +678,19 @@ mp4mx_create_buffer_list(GF_Filter* filter, GF_FilterPid* pid)
     GstBuffer* sample_buffer = gst_buffer_new();
 
     // Slice the buffer
-    gsize avail_sample_size = sample->size;
-    gsize offset = 0;
+    gssize avail_sample_size = sample->size;
+    gssize offset = 0;
     guint n_blocks = gst_buffer_n_memory(GET_TYPE(DATA)->buffer);
     for (guint b = 0; b < n_blocks && avail_sample_size; b++) {
       GstMemory* mem = gst_buffer_peek_memory(GET_TYPE(DATA)->buffer, b);
-      gsize size = gst_memory_get_sizes(mem, NULL, NULL);
+      gssize size = (gssize)gst_memory_get_sizes(mem, NULL, NULL);
 
       // Skip until we reach the data offset
       if (offset + size <= data_offset)
         goto skip;
 
       // Check the offset within the block
-      gsize block_offset = 0;
+      gssize block_offset = 0;
       if (offset < data_offset) {
         block_offset = data_offset - offset;
         offset += block_offset;

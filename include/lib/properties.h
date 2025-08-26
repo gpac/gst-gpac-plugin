@@ -61,13 +61,13 @@ typedef enum
   GPAC_PROP_GLOBAL_OFFSET = (1 << 8), // Way higher than any filter property
 } GPAC_PropertyId;
 
-#define IS_TOP_LEVEL_PROPERTY(prop)                       \
-  (prop > GPAC_PROP_0 && prop < GPAC_PROP_ELEMENT_OFFSET)
-#define IS_ELEMENT_PROPERTY(prop)                                     \
-  (prop > GPAC_PROP_ELEMENT_OFFSET && prop < GPAC_PROP_FILTER_OFFSET)
-#define IS_FILTER_PROPERTY(prop)                                      \
-  (prop >= GPAC_PROP_FILTER_OFFSET && prop < GPAC_PROP_GLOBAL_OFFSET)
-#define IS_GLOBAL_PROPERTY(prop) (prop >= GPAC_PROP_GLOBAL_OFFSET)
+#define IS_TOP_LEVEL_PROPERTY(prop)                           \
+  ((prop) > GPAC_PROP_0 && (prop) < GPAC_PROP_ELEMENT_OFFSET)
+#define IS_ELEMENT_PROPERTY(prop)                                         \
+  ((prop) > GPAC_PROP_ELEMENT_OFFSET && (prop) < GPAC_PROP_FILTER_OFFSET)
+#define IS_FILTER_PROPERTY(prop)                                          \
+  ((prop) >= GPAC_PROP_FILTER_OFFSET && (prop) < GPAC_PROP_GLOBAL_OFFSET)
+#define IS_GLOBAL_PROPERTY(prop) ((prop) >= GPAC_PROP_GLOBAL_OFFSET)
 
 /*! installs the local (element-specific) properties as properties of a GObject
    class

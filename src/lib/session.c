@@ -148,7 +148,8 @@ gpac_session_run(GPAC_SessionContext* ctx, gboolean flush)
            (flush || (e == GF_OK && steps--)));
 
   // Check errors
-  if ((e = gf_fs_get_last_connect_error(ctx->session)) != GF_OK) {
+  e = gf_fs_get_last_connect_error(ctx->session);
+  if (e != GF_OK) {
     GST_ELEMENT_ERROR(ctx->element,
                       LIBRARY,
                       FAILED,
@@ -156,7 +157,8 @@ gpac_session_run(GPAC_SessionContext* ctx, gboolean flush)
                       (NULL));
     return e;
   }
-  if ((e = gf_fs_get_last_process_error(ctx->session)) != GF_OK) {
+  e = gf_fs_get_last_process_error(ctx->session);
+  if (e != GF_OK) {
     GST_ELEMENT_ERROR(ctx->element,
                       LIBRARY,
                       FAILED,

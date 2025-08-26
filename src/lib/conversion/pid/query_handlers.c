@@ -74,7 +74,7 @@ QUERY_HANDLER_SIGNATURE(duration)
 
   // Construct the duration
   GF_Fraction64 duration_fr = {
-    .num = gpac_time_rescale_with_fps(duration, fps, timescale),
+    .num = (s64)gpac_time_rescale_with_fps(duration, fps, timescale),
     .den = timescale,
   };
 

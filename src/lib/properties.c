@@ -154,7 +154,7 @@ gpac_install_filter_properties(GObjectClass* gobject_class,
                                GList* blacklist,
                                const gchar* filter_name)
 {
-  GF_FilterSession* session = gf_fs_new_defaults(0u);
+  GF_FilterSession* session = gf_fs_new_defaults(0U);
   guint num_filters = gf_fs_filters_registers_count(session);
 
   // Get the list seperator
@@ -437,7 +437,7 @@ gpac_apply_properties(GPAC_PropertyContext* ctx)
   if (ctx->props_as_argv) {
     for (u32 i = 0; ctx->props_as_argv[i]; i++)
       g_free(ctx->props_as_argv[i]);
-    g_free(ctx->props_as_argv);
+    g_free((void*)ctx->props_as_argv);
     ctx->props_as_argv = NULL;
   }
 

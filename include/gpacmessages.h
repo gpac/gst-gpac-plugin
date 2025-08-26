@@ -38,7 +38,8 @@
   G_STMT_START                                                     \
   {                                                                \
     GPAC_LOCAL_ERROR                                               \
-    if (G_LIKELY((gpac_error = expr) == GF_OK)) {                  \
+    gpac_error = (expr);                                           \
+    if (G_LIKELY(gpac_error == GF_OK)) {                           \
     } else {                                                       \
       GPAC_ERROR_START(#expr)                                      \
       g_return_if_fail_warning(G_LOG_DOMAIN, G_STRFUNC, gpac_msg); \
@@ -52,7 +53,8 @@
   G_STMT_START                                                     \
   {                                                                \
     GPAC_LOCAL_ERROR                                               \
-    if (G_LIKELY((gpac_error = expr) == GF_OK)) {                  \
+    gpac_error = (expr);                                           \
+    if (G_LIKELY(gpac_error == GF_OK)) {                           \
     } else {                                                       \
       GPAC_ERROR_START(#expr)                                      \
       g_return_if_fail_warning(G_LOG_DOMAIN, G_STRFUNC, gpac_msg); \

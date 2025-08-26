@@ -438,7 +438,7 @@ gst_gpac_tf_sink_event(GstAggregator* agg,
       priv->dts_offset_set = FALSE;
 
       gboolean is_video_pad = gst_pad_get_pad_template(GST_PAD(pad)) ==
-                              gst_gpac_get_sink_template(TEMPLATE_VIDEO);
+                              gst_gpac_get_sink_template(GPAC_TEMPLATE_VIDEO);
       gboolean is_only_pad = g_list_length(GST_ELEMENT(agg)->sinkpads) == 1;
 
       // Update the segment and global offset only if video pad or the only pad
@@ -668,7 +668,7 @@ gst_gpac_tf_aggregate(GstAggregator* agg, gboolean timeout)
           // Send the key frame request
           // Only send IDR request for video pads
           if (gst_pad_get_pad_template(pad) ==
-              gst_gpac_get_sink_template(TEMPLATE_VIDEO)) {
+              gst_gpac_get_sink_template(GPAC_TEMPLATE_VIDEO)) {
             gst_gpac_request_idr(agg, pad, buffer);
           }
 
@@ -691,8 +691,9 @@ gst_gpac_tf_aggregate(GstAggregator* agg, gboolean timeout)
           g_queue_push_tail(queue, packet);
 
           // Select the highest PTS for sync buffer
-          gboolean is_video_pad = gst_pad_get_pad_template(GST_PAD(pad)) ==
-                                  gst_gpac_get_sink_template(TEMPLATE_VIDEO);
+          gboolean is_video_pad =
+            gst_pad_get_pad_template(GST_PAD(pad)) ==
+            gst_gpac_get_sink_template(GPAC_TEMPLATE_VIDEO);
           gboolean is_only_pad = g_list_length(GST_ELEMENT(agg)->sinkpads) == 1;
           if (is_video_pad || is_only_pad) {
             if (gpac_tf->sync_buffer) {
@@ -1023,7 +1024,7 @@ gst_gpac_tf_finalize(GObject* object)
   if (ctx->props_as_argv) {
     for (u32 i = 0; ctx->props_as_argv[i]; i++)
       g_free(ctx->props_as_argv[i]);
-    g_free(ctx->props_as_argv);
+    g_free((void*)ctx->props_as_argv);
   }
 
   // Free the queue

@@ -121,9 +121,8 @@ CAPS_HANDLER_SIGNATURE(unframed)
   gboolean framed = TRUE;
   if (!g_strcmp0(media, "video")) {
     if (stream_format) {
-      if (!g_strcmp0(stream_format, "byte-stream"))
-        framed = FALSE;
-      else if (!g_strcmp0(stream_format, "obu-stream"))
+      if (!g_strcmp0(stream_format, "byte-stream") ||
+          !g_strcmp0(stream_format, "obu-stream"))
         framed = FALSE;
     }
   } else if (!g_strcmp0(media, "audio")) {

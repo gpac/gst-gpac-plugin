@@ -408,7 +408,8 @@ dasher_post_process(GF_Filter* filter, GF_FilterPid* pid, GF_FilterPacket* pck)
   GPAC_MemOutPIDContext* ctx =
     (GPAC_MemOutPIDContext*)gf_filter_pid_get_udta(pid);
   DasherCtx* dasher_ctx = (DasherCtx*)ctx->private_ctx;
-  const GF_PropertyValue *fname, *p;
+  const GF_PropertyValue* fname;
+  const GF_PropertyValue* p;
 
   if (!pck) {
     if (gf_filter_pid_is_eos(pid) && !gf_filter_pid_is_flush_eos(pid)) {
@@ -419,7 +420,8 @@ dasher_post_process(GF_Filter* filter, GF_FilterPid* pid, GF_FilterPacket* pck)
   }
 
   // Check the packet framing
-  Bool start, end;
+  Bool start;
+  Bool end;
   gf_filter_pck_get_framing(pck, &start, &end);
   if (dasher_ctx->dash_state) {
     p = gf_filter_pck_get_property(pck, GF_PROP_PCK_FILENUM);
@@ -439,7 +441,9 @@ dasher_post_process(GF_Filter* filter, GF_FilterPid* pid, GF_FilterPacket* pck)
     if (dasher_ctx->main_file)
       dasher_open_close_file(filter, pid, NULL, FALSE);
 
-    const GF_PropertyValue *ext, *fnum, *rel;
+    const GF_PropertyValue* ext;
+    const GF_PropertyValue* fnum;
+    const GF_PropertyValue* rel;
     Bool explicit_overwrite = GF_FALSE;
     const char* name = NULL;
     fname = ext = NULL;

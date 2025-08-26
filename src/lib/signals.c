@@ -101,9 +101,10 @@ register_signal(GObjectClass* klass, GPAC_SignalId id)
 }
 
 void
-gpac_install_signals_by_presets(GObjectClass* klass, const gchar* presets)
+gpac_install_signals_by_presets(GObjectClass* gobject_class,
+                                const gchar* presets)
 {
-  g_assert(klass != NULL);
+  g_assert(gobject_class != NULL);
   g_assert(presets != NULL);
 
   gchar** preset_list = g_strsplit(presets, ",", -1);
@@ -119,7 +120,7 @@ gpac_install_signals_by_presets(GObjectClass* klass, const gchar* presets)
           to = GPAC_SIGNAL_END;
 
         for (guint32 id = from; id <= to && id < GPAC_SIGNAL_LAST; id++) {
-          register_signal(klass, id);
+          register_signal(gobject_class, id);
         }
         break;
       }
@@ -129,12 +130,12 @@ gpac_install_signals_by_presets(GObjectClass* klass, const gchar* presets)
 }
 
 void
-gpac_install_all_signals(GObjectClass* klass)
+gpac_install_all_signals(GObjectClass* gobject_class)
 {
-  g_assert(klass != NULL);
+  g_assert(gobject_class != NULL);
 
   for (guint32 id = GPAC_SIGNAL_START; id < GPAC_SIGNAL_LAST; id++) {
-    register_signal(klass, id);
+    register_signal(gobject_class, id);
   }
 }
 

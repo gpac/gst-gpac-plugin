@@ -99,10 +99,10 @@ typedef struct
 
 typedef enum
 {
-  TEMPLATE_VIDEO,
-  TEMPLATE_AUDIO,
-  TEMPLATE_SUBTITLE,
-  TEMPLATE_CAPTION,
+  GPAC_TEMPLATE_VIDEO,
+  GPAC_TEMPLATE_AUDIO,
+  GPAC_TEMPLATE_SUBTITLE,
+  GPAC_TEMPLATE_CAPTION,
 } GstGpacSinkTemplateType;
 
 /*! Get the sink pad template for the given type

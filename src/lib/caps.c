@@ -44,45 +44,48 @@ void
 gpac_install_sink_pad_templates(GstElementClass* klass)
 {
   // Video pad template
-  if (sink_templates[TEMPLATE_VIDEO] == NULL) {
-    sink_templates[TEMPLATE_VIDEO] = gst_pad_template_new(
+  if (sink_templates[GPAC_TEMPLATE_VIDEO] == NULL) {
+    sink_templates[GPAC_TEMPLATE_VIDEO] = gst_pad_template_new(
       "video_%u",
       GST_PAD_SINK,
       GST_PAD_REQUEST,
       gst_static_caps_get(&gst_gpac_sink_formats.video_caps));
   }
-  gst_element_class_add_pad_template(klass, sink_templates[TEMPLATE_VIDEO]);
+  gst_element_class_add_pad_template(klass,
+                                     sink_templates[GPAC_TEMPLATE_VIDEO]);
 
   // Audio pad template
-  if (sink_templates[TEMPLATE_AUDIO] == NULL) {
-    sink_templates[TEMPLATE_AUDIO] = gst_pad_template_new(
+  if (sink_templates[GPAC_TEMPLATE_AUDIO] == NULL) {
+    sink_templates[GPAC_TEMPLATE_AUDIO] = gst_pad_template_new(
       "audio_%u",
       GST_PAD_SINK,
       GST_PAD_REQUEST,
       gst_static_caps_get(&gst_gpac_sink_formats.audio_caps));
   }
-  gst_element_class_add_pad_template(klass, sink_templates[TEMPLATE_AUDIO]);
+  gst_element_class_add_pad_template(klass,
+                                     sink_templates[GPAC_TEMPLATE_AUDIO]);
 
+  // NOLINTNEXTLINE
 #if 0 // FIXME: Subtitle and caption support has not been tested yet
   // Subtitle pad template
-  if (sink_templates[TEMPLATE_SUBTITLE] == NULL) {
-    sink_templates[TEMPLATE_SUBTITLE] = gst_pad_template_new(
+  if (sink_templates[GPAC_TEMPLATE_SUBTITLE] == NULL) {
+    sink_templates[GPAC_TEMPLATE_SUBTITLE] = gst_pad_template_new(
       "subtitle_%u",
       GST_PAD_SINK,
       GST_PAD_REQUEST,
       gst_static_caps_get(&gst_gpac_sink_formats.subtitle_caps));
   }
-  gst_element_class_add_pad_template(klass, sink_templates[TEMPLATE_SUBTITLE]);
+  gst_element_class_add_pad_template(klass, sink_templates[GPAC_TEMPLATE_SUBTITLE]);
 
   // Caption pad template
-  if (sink_templates[TEMPLATE_CAPTION] == NULL) {
-    sink_templates[TEMPLATE_CAPTION] = gst_pad_template_new(
+  if (sink_templates[GPAC_TEMPLATE_CAPTION] == NULL) {
+    sink_templates[GPAC_TEMPLATE_CAPTION] = gst_pad_template_new(
       "caption_%u",
       GST_PAD_SINK,
       GST_PAD_REQUEST,
       gst_static_caps_get(&gst_gpac_sink_formats.caption_caps));
   }
-  gst_element_class_add_pad_template(klass, sink_templates[TEMPLATE_CAPTION]);
+  gst_element_class_add_pad_template(klass, sink_templates[GPAC_TEMPLATE_CAPTION]);
 #endif
 }
 
@@ -108,7 +111,8 @@ gpac_gstcaps_to_gfcaps(GstCaps* caps, guint* nb_caps)
   if (gst_caps_get_size(caps) == 0) {
     GST_ERROR("No structure in caps");
     return NULL;
-  } else if (gst_caps_get_size(caps) > 1)
+  }
+  if (gst_caps_get_size(caps) > 1)
     GST_WARNING("Multiple structures in caps, will only use the first one");
   GstStructure* structure = gst_caps_get_structure(caps, 0);
 

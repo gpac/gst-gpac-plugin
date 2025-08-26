@@ -76,9 +76,11 @@ struct _GstGpacTransform
 /**
  * Accessors
  */
+// NOLINTBEGIN
 #define GPAC_CTX &gpac_tf->gpac_ctx
 #define GPAC_PROP_CTX(ctx) (ctx.prop)
 #define GPAC_SESS_CTX(ctx) (ctx.sess)
+// NOLINTEND
 
 #define GST_TYPE_GPAC_TF_PAD (gst_gpac_tf_pad_get_type())
 G_DECLARE_FINAL_TYPE(GstGpacTransformPad,
