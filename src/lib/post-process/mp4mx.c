@@ -480,7 +480,7 @@ mp4mx_parse_moof(GF_Filter* filter, GF_FilterPid* pid, GstBuffer* buffer)
     sample->pts += ctx->global_offset;
 
     GST_TRACE_OBJECT(ctx->sess->element,
-                     "Sample %d [%s]: size: %" G_GUINT64_FORMAT ", "
+                     "Sample %d [%s]: size: %" G_GSSIZE_FORMAT ", "
                      "duration: %" GST_TIME_FORMAT ", "
                      "DTS: %" GST_TIME_FORMAT ", "
                      "PTS: %" GST_TIME_FORMAT,
@@ -734,7 +734,7 @@ mp4mx_create_buffer_list(GF_Filter* filter, GF_FilterPid* pid)
 
     GST_TRACE_OBJECT(
       ctx->sess->element,
-      "Added sample %d to the buffer list: size: %" G_GUINT64_FORMAT ", "
+      "Added sample %d to the buffer list: size: %" G_GSSIZE_FORMAT ", "
       "duration: %" GST_TIME_FORMAT ", "
       "DTS: %" GST_TIME_FORMAT ", "
       "PTS: %" GST_TIME_FORMAT,
