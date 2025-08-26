@@ -14,6 +14,7 @@ project(gpac_plugin VERSION 0.2.1 LANGUAGES C) # x-release-please-version
 
 # Options
 option(ENABLE_TESTS "Enable and build tests" OFF)
+option(ENABLE_COVERAGE "Enable coverage reporting (only in Debug mode)" OFF)
 
 # Set default build type to Release
 if(NOT CMAKE_BUILD_TYPE)
@@ -63,7 +64,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE
   -Wno-cast-function-type
 )
 
-if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug" OR ENABLE_COVERAGE)
   message(STATUS "Building in Debug mode")
   target_compile_options(${PROJECT_NAME} PRIVATE -g)
 else()
@@ -112,6 +113,39 @@ if(GST_LAUNCH_EXECUTABLE)
 
   # Define a custom target that uses this command
   add_custom_target(create_gst_link ALL DEPENDS ${CMAKE_BINARY_DIR}/gst-launch)
+endif()
+
+# Coverage
+if(ENABLE_COVERAGE)
+  target_compile_options(${PROJECT_NAME} PRIVATE -O0 --coverage)
+  target_link_options(${PROJECT_NAME} PRIVATE --coverage)
+
+  # Enable tests
+  if(NOT ENABLE_TESTS)
+    set(ENABLE_TESTS ON CACHE BOOL "Enable and build tests" FORCE)
+    message(STATUS "ENABLE_TESTS was OFF, enabling it for coverage reporting")
+  endif()
+
+  # Check required executables
+  find_program(LCOV_EXECUTABLE lcov)
+  find_program(GENHTML_EXECUTABLE genhtml)
+
+  if(NOT LCOV_EXECUTABLE OR NOT GENHTML_EXECUTABLE)
+    message(WARNING "lcov and/or genhtml not found, coverage report target will not be created")
+  else()
+    # Add coverage report target
+    add_custom_target(coverage_report ALL
+      DEPENDS ${PROJECT_NAME} gstgpacplugin_test
+      COMMAND ${CMAKE_COMMAND} -E env "GST_PLUGIN_PATH=${CMAKE_BINARY_DIR}/lib:$ENV{GST_PLUGIN_PATH}" ./tests/gstgpacplugin_test
+      COMMAND ${CMAKE_COMMAND} -E make_directory coverage
+      COMMAND lcov --capture --directory CMakeFiles/gpac_plugin.dir/src --output-file coverage/coverage.info --ignore-errors inconsistent,inconsistent
+      COMMAND lcov --remove coverage/coverage.info /usr/* --output-file coverage/coverage.filtered.info
+      COMMAND genhtml --flat coverage/coverage.filtered.info --output-directory ${CMAKE_SOURCE_DIR}/coverage
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+      COMMENT "Running tests and generating coverage report"
+      VERBATIM
+    )
+  endif()
 endif()
 
 # Tests

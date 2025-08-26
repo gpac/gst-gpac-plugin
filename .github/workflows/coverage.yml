@@ -1,0 +1,62 @@
+name: Coverage
+
+on:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  coverage:
+    if: github.repository == 'gpac/gst-gpac-plugin'
+    name: Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install gpac and GStreamer
+        uses: ./.github/actions/deps
+        with:
+          for-test: true
+
+      - name: Install plugins
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gstreamer1.0-plugins-ugly gstreamer1.0-plugins-bad gstreamer1.0-libav
+
+      - name: Install lcov
+        shell: bash
+        run: sudo apt-get install -y lcov
+
+      - name: Build
+        shell: bash
+        env:
+          GST_PLUGIN_PATH: $HOME/.local/share/gstreamer-1.0/plugins
+        run: cmake -DENABLE_TESTS=ON -DENABLE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug -B build
+
+      # Run the tests
+      - name: Test
+        shell: bash
+        env:
+          GST_DEBUG: 3
+        run: cmake --build build -j -t coverage_report
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload coverage artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: coverage
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
