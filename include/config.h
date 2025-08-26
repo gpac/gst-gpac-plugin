@@ -25,7 +25,7 @@
 
 #pragma once
 
-#define VERSION "0.2.1" // x-release-please-version
+#define VERSION "0.2.2" // x-release-please-version
 
 // Package information
 #define PACKAGE "gst-gpac-plugin"

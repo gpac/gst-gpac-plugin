@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.2.2](https://github.com/gpac/gst-gpac-plugin/compare/v0.2.1...v0.2.2) (2025-08-26)
+
+
+### Features
+
+* add delete-segment signal for gpachlssink ([6e9235b](https://github.com/gpac/gst-gpac-plugin/commit/6e9235b4a1cf81c16fc0ea8e102efe13f874b63a))
+* add destination option to the sink ([db7d211](https://github.com/gpac/gst-gpac-plugin/commit/db7d2111a3886cb655e3240f91ed6a695eed73a9))
+* add id3 handling ([fff2606](https://github.com/gpac/gst-gpac-plugin/commit/fff2606372cda8a7da6d9ac22ab1ef85f7ad9b77))
+* add the ability to connect to multiple PIDs inside the gpac filter session ([d324997](https://github.com/gpac/gst-gpac-plugin/commit/d32499788eb8cb67bc306919f55cb2b27c1f7918))
+* expose `-broken-cert` global option ([685a832](https://github.com/gpac/gst-gpac-plugin/commit/685a832fa99206cd9f5e98d4e716984f4fa8945e))
+* new gpachlssink element that wraps dasher ([be5b6d8](https://github.com/gpac/gst-gpac-plugin/commit/be5b6d881156158f841774b0a9780b47283b2411))
+
+
+### Bug Fixes
+
+* add sync option that will be relayed to the inner fakesink ([7bd264e](https://github.com/gpac/gst-gpac-plugin/commit/7bd264edf7d4eb6a8c555296e8dca23d4990145d))
+* call gst_aggregator_selected_samples on configurations where a buffer is generated ([888bf6d](https://github.com/gpac/gst-gpac-plugin/commit/888bf6d1082b0ee0e8cae8c48748c10af63a42ae))
+* change delete-segment signature and expect a boolean ([f32857f](https://github.com/gpac/gst-gpac-plugin/commit/f32857fd17f20e29f94b954714e881acf34ab013))
+* consume all pending buffers in the aggregate call ([ed763b2](https://github.com/gpac/gst-gpac-plugin/commit/ed763b2eaf8ccb778b4a40a0e176908e357f0c3a))
+* correctly handle ll-hls parts ([4b3e7e5](https://github.com/gpac/gst-gpac-plugin/commit/4b3e7e565518961088f0bd2f77b9b6e1c42b7a00))
+* don't request idr for non-video pads ([b41fd35](https://github.com/gpac/gst-gpac-plugin/commit/b41fd35fa3d2d1be45756fae041b1bdc7a390f41))
+* fallback to a file write if no signal is provided ([c617cc4](https://github.com/gpac/gst-gpac-plugin/commit/c617cc4623f9db371b6c55d2e273616bf0d2613d))
+* make pid id consistent ([cd15841](https://github.com/gpac/gst-gpac-plugin/commit/cd158419b2c29d6a0c3ad62cbb3f586f22abb209))
+* print-stats option was leaking some internal logs not relevant to the stats ([0d11a83](https://github.com/gpac/gst-gpac-plugin/commit/0d11a83ef1203aa411c1eba814e37036e21edc37))
+* property ranges and defaults ([ea3c060](https://github.com/gpac/gst-gpac-plugin/commit/ea3c060528f146d316c7020a47bd498dc09a343f))
+* regression from fff2606372cda8a7da6d9ac22ab1ef85f7ad9b77 ([f3bcab7](https://github.com/gpac/gst-gpac-plugin/commit/f3bcab707625690662b7d02eb13d38f247bc2df6))
+* undefined behavior ([9ce23dd](https://github.com/gpac/gst-gpac-plugin/commit/9ce23dd3c3c66174a9fc8eee8c9f18093a79a6fc))
+* use internal transform element inside gpacsink and avoid registering signals there ([276d64e](https://github.com/gpac/gst-gpac-plugin/commit/276d64e3332b178798a393cc20f97496c3005045))
+* use the peer pad name without prefixing it with 'ghost_' ([1395d68](https://github.com/gpac/gst-gpac-plugin/commit/1395d686f624223a62c8c6a6d265b7f499b525d1))
+
 ## [0.2.1](https://github.com/gpac/gst-gpac-plugin/compare/v0.2.0...v0.2.1) (2025-04-16)
 
 
