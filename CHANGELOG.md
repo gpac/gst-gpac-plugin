@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/gpac/gst-gpac-plugin/compare/v0.2.2...v0.2.3) (2025-08-27)
+
+
+### Bug Fixes
+
+* remove extra newline from gpac logs ([56fc9a8](https://github.com/gpac/gst-gpac-plugin/commit/56fc9a82be8c02f991481ec8878efdfacb745e3e))
+
 ## [0.2.2](https://github.com/gpac/gst-gpac-plugin/compare/v0.2.1...v0.2.2) (2025-08-26)
 
 
