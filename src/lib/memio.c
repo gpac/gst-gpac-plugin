@@ -398,9 +398,9 @@ static Bool
 gpac_default_memin_process_event_cb(GF_Filter* filter,
                                     const GF_FilterEvent* evt)
 {
-  if (evt->base.type == GF_FEVT_ENCODE_HINTS) {
+  if (evt->base.type == GF_FEVT_TRANSPORT_HINTS) {
     GF_FilterPid* pid = evt->base.on_pid;
-    GF_Fraction intra_period = evt->encode_hints.intra_period;
+    GF_Fraction intra_period = evt->transport_hints.seg_duration;
     GpacPadPrivate* priv = gf_filter_pid_get_udta(pid);
     GstElement* element = gst_pad_get_parent_element(priv->self);
 
