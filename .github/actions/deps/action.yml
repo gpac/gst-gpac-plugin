@@ -107,7 +107,7 @@ runs:
     - name: Install cmafmux element
       if: inputs.for-test == 'true'
       shell: bash
-      working-directory: ${{ runner.temp }}/gst-plugins-rs/build
+      working-directory: ${{ runner.temp }}/gst-plugins-rs/build/plugins
       run: |
         dst_dir=$HOME/.local/share/gstreamer-1.0/plugins
         mkdir -p $dst_dir
