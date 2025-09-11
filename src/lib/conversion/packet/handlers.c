@@ -52,7 +52,7 @@ id3_handler(GPAC_PCK_PROP_IMPL_ARGS)
   // Create new list to store the tags
   GF_List* tag_list = gf_list_new();
   guint64 pts = gf_filter_pck_get_cts(pck);
-  guint32 timescale = gf_filter_pck_get_timescale(pck);
+  guint32 timescale = gf_filter_pid_get_timescale(pid);
 
   for (guint i = 0; i < n; ++i) {
     const GValue* tag_val = gst_value_list_get_value(tags_val, i);

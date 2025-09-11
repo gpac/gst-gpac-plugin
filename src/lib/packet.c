@@ -141,7 +141,7 @@ gpac_pck_prop_configure(GPAC_PCK_PROP_IMPL_ARGS)
     prop_registry_entry* entry = &prop_registry[i];
 
     // Run the handler for the property
-    entry->handler(buffer, priv, pck);
+    entry->handler(buffer, priv, pck, pid);
   }
 }
 
@@ -231,7 +231,7 @@ gpac_pck_new_from_buffer(GstBuffer* buffer,
   }
 
   // Configure the packet properties
-  gpac_pck_prop_configure(buffer, priv, packet);
+  gpac_pck_prop_configure(buffer, priv, packet, pid);
 
   return packet;
 }

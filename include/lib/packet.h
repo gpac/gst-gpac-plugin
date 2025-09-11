@@ -31,8 +31,8 @@
 #include "lib/pid.h"
 #include "lib/time.h"
 
-#define GPAC_PCK_PROP_IMPL_ARGS_NO_ELEMENT   \
-  GpacPadPrivate *priv, GF_FilterPacket *pck
+#define GPAC_PCK_PROP_IMPL_ARGS_NO_ELEMENT                      \
+  GpacPadPrivate *priv, GF_FilterPacket *pck, GF_FilterPid *pid
 #define GPAC_PCK_PROP_IMPL_ARGS                         \
   GstBuffer *buffer, GPAC_PCK_PROP_IMPL_ARGS_NO_ELEMENT
 
