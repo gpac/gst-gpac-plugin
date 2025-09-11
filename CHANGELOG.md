@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.3](https://github.com/gpac/gst-gpac-plugin/compare/v0.2.2...v0.2.3) (2025-09-11)
+
+
+### Bug Fixes
+
+* get timescale from pid for id3 handler ([d6dcf98](https://github.com/gpac/gst-gpac-plugin/commit/d6dcf98f5d71a0ae7f1e52fc88cc4a95ff80531e))
+* remove extra newline from gpac logs ([56fc9a8](https://github.com/gpac/gst-gpac-plugin/commit/56fc9a82be8c02f991481ec8878efdfacb745e3e))
+* update to transport_hints so that it can build against latest gpac master ([c47ecaf](https://github.com/gpac/gst-gpac-plugin/commit/c47ecaf82fe005f439800e6fb2e57af7576e4d23))
+
 ## [0.2.2](https://github.com/gpac/gst-gpac-plugin/compare/v0.2.1...v0.2.2) (2025-08-26)
 
 
