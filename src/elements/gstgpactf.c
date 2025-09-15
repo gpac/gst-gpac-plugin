@@ -779,7 +779,8 @@ gst_gpac_tf_create_new_pad(GstAggregator* element,
     if (pad_name != NULL && sscanf(pad_name, prefix "_%u", &pad_id) == 1) { \
       name = g_strdup(pad_name);                                            \
     } else {                                                                \
-      pad_id = agg->count_field;                                            \
+      pad_id = agg->audio_pad_count + agg->video_pad_count +                \
+               agg->subtitle_pad_count + agg->caption_pad_count;            \
       name = g_strdup_printf(prefix "_%u", pad_id);                         \
     }                                                                       \
   } else
