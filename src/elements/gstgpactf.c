@@ -775,10 +775,12 @@ gst_gpac_tf_create_new_pad(GstAggregator* element,
 
 #define TEMPLATE_CHECK(prefix, count_field)                                 \
   if (templ == gst_element_class_get_pad_template(klass, prefix "_%u")) {   \
+    agg->count_field++;                                                     \
     if (pad_name != NULL && sscanf(pad_name, prefix "_%u", &pad_id) == 1) { \
       name = g_strdup(pad_name);                                            \
     } else {                                                                \
-      name = g_strdup_printf(prefix "_%u", agg->count_field++);             \
+      pad_id = agg->count_field;                                            \
+      name = g_strdup_printf(prefix "_%u", pad_id);                         \
     }                                                                       \
   } else
 
@@ -808,13 +810,9 @@ gst_gpac_tf_create_new_pad(GstAggregator* element,
                                           NULL);
   g_free(name);
 
-  // Get the total number of pads
-  guint pad_count = agg->audio_pad_count + agg->video_pad_count +
-                    agg->subtitle_pad_count + agg->caption_pad_count;
-
   // Initialize the private data
   GpacPadPrivate* priv = gst_pad_get_element_private(GST_PAD(pad));
-  priv->id = pad_count;
+  priv->id = pad_id;
   if (caps) {
     priv->caps = gst_caps_copy(caps);
     priv->flags |= GPAC_PAD_CAPS_SET;
