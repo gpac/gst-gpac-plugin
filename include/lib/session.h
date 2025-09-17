@@ -65,6 +65,12 @@ gpac_session_init(GPAC_SessionContext* ctx,
 gboolean
 gpac_session_close(GPAC_SessionContext* ctx, gboolean print_stats);
 
+/*! aborts a gpac filter session
+    \param[in] ctx the session context to abort
+*/
+void
+gpac_session_abort(GPAC_SessionContext* ctx);
+
 /*! runs a gpac filter session
     \param[in] ctx the session context to run
     \param[in] flush whether to flush the session

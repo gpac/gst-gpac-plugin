@@ -996,6 +996,10 @@ gst_gpac_tf_stop(GstAggregator* aggregator)
   // Reset the element
   gst_gpac_tf_reset(gpac_tf);
 
+  // Abort the session
+  gpac_memio_set_eos(GPAC_SESS_CTX(GPAC_CTX), TRUE);
+  gpac_session_abort(GPAC_SESS_CTX(GPAC_CTX));
+
   // Close the session
   if (!gpac_session_close(GPAC_SESS_CTX(GPAC_CTX),
                           GPAC_PROP_CTX(GPAC_CTX)->print_stats)) {

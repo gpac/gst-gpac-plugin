@@ -133,6 +133,13 @@ gpac_session_close(GPAC_SessionContext* ctx, gboolean print_stats)
   return TRUE;
 }
 
+void
+gpac_session_abort(GPAC_SessionContext* ctx)
+{
+  if (ctx->session)
+    gf_fs_abort(ctx->session, GF_FS_FLUSH_FAST);
+}
+
 GF_Err
 gpac_session_run(GPAC_SessionContext* ctx, gboolean flush)
 {
