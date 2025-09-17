@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.3](https://github.com/gpac/gst-gpac-plugin/compare/v0.2.2...v0.2.3) (2025-09-17)
+
+
+### Bug Fixes
+
+* abort the session stopped ([fcdbc4e](https://github.com/gpac/gst-gpac-plugin/commit/fcdbc4e07b35da39d8450c17e22ef6123796dd59))
+* get timescale from pid for id3 handler ([d6dcf98](https://github.com/gpac/gst-gpac-plugin/commit/d6dcf98f5d71a0ae7f1e52fc88cc4a95ff80531e))
+* regression from e653fd06f06a8467369ab5bf37cd8023dd5b484e ([984aa74](https://github.com/gpac/gst-gpac-plugin/commit/984aa74f12332d630d93f5c44960128d1dd71d94))
+* remove extra newline from gpac logs ([56fc9a8](https://github.com/gpac/gst-gpac-plugin/commit/56fc9a82be8c02f991481ec8878efdfacb745e3e))
+* update to transport_hints so that it can build against latest gpac master ([c47ecaf](https://github.com/gpac/gst-gpac-plugin/commit/c47ecaf82fe005f439800e6fb2e57af7576e4d23))
+* use pad id from the pad name if available ([e653fd0](https://github.com/gpac/gst-gpac-plugin/commit/e653fd06f06a8467369ab5bf37cd8023dd5b484e))
+
 ## [0.2.2](https://github.com/gpac/gst-gpac-plugin/compare/v0.2.1...v0.2.2) (2025-08-26)
 
 
