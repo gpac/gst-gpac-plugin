@@ -64,7 +64,7 @@ jobs:
         run: |
           cmake -B build
           cmake --build build -j --target release_package
-          echo "artifact=${ls build/*.deb}" >> $GITHUB_OUTPUT
+          echo "artifact=$(ls build/*.deb)" >> $GITHUB_OUTPUT
 
       - name: Upload Release Artifact
         shell: bash
