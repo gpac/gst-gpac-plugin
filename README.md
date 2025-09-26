@@ -32,7 +32,7 @@ This is again a convenience element that functions similarly to `gpactf` element
 ### Other noteworthy elements
 
 - **`gpachlssink`**: This element is a sink for HLS streams. It can be used to create HLS playlists and segments.
-- **`gpachtsmx`**: This element is a sink for TS streams. It can be used to create MPEG-TS segments.
+- **`gpactsmx`**: This element is a sink for TS streams. It can be used to create MPEG-TS segments.
 
 ## Installation
 
