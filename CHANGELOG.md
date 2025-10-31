@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.2.4](https://github.com/gpac/gst-gpac-plugin/compare/v0.2.3...v0.2.4) (2025-10-31)
+
+
+### Features
+
+* add text/x-raw support ([86f5578](https://github.com/gpac/gst-gpac-plugin/commit/86f55789f83629bffc4ab80d6ba9a80cffbd7e94))
+
+
+### Bug Fixes
+
+* better handling of non-empty queue on pipeline finish ([a0e9d68](https://github.com/gpac/gst-gpac-plugin/commit/a0e9d68d2559f89f9a0d8157760ff94cd1128529))
+* immediately eos on event ([4da5938](https://github.com/gpac/gst-gpac-plugin/commit/4da59386fee4f17639c95731a8d409d601b5478a))
+* minor fix for a log ([ceae055](https://github.com/gpac/gst-gpac-plugin/commit/ceae05570251cdc966b5fccc93c464ea3af8052b))
+
 ## [0.2.3](https://github.com/gpac/gst-gpac-plugin/compare/v0.2.2...v0.2.3) (2025-09-17)
 
 
