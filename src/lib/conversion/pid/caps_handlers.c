@@ -82,7 +82,14 @@ CAPS_HANDLER_SIGNATURE(codec_id)
 
   // In most cases the substring after "x-" can be used to query the codec id
   if (g_str_has_prefix(codec, "x-")) {
-    codec_id = gf_codecid_parse(codec + 2);
+    size_t offset = 2;
+    // Subtitle doesn't have "raw" codec
+    if (!g_strcmp0(media, "text") && !g_strcmp0(codec, "x-raw")) {
+      codec_id = GF_CODECID_SIMPLE_TEXT;
+      goto finish;
+    }
+
+    codec_id = gf_codecid_parse(codec + offset);
     if (codec_id != GF_CODECID_NONE)
       goto finish;
   }
@@ -127,6 +134,9 @@ CAPS_HANDLER_SIGNATURE(unframed)
     }
   } else if (!g_strcmp0(media, "audio")) {
     gst_structure_get_boolean(structure, "framed", &framed);
+  } else if (!g_strcmp0(media, "text")) {
+    // For text media we assume unframed data
+    framed = FALSE;
   }
 
   //* For AVC, HEVC, AV1, etc. our caps always ask for streams with start codes.
@@ -241,6 +251,9 @@ CAPS_HANDLER_SIGNATURE(timescale)
       gf_filter_pid_get_property(pid, GF_PROP_PID_SAMPLE_RATE);
     if (p)
       timescale = p->value.uint;
+  } else if (!g_strcmp0(media, "text")) {
+    // For text media we can use a default timescale
+    timescale = 1000;
   } else {
     GST_ELEMENT_ERROR(element,
                       LIBRARY,

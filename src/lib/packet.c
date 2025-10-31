@@ -47,6 +47,10 @@ gpac_pck_get_stream_time(GstClockTime time,
   if (!GST_CLOCK_TIME_IS_VALID(time))
     goto fail;
 
+  // Identity if segment isn't time based
+  if (!priv->segment || priv->segment->format != GST_FORMAT_TIME)
+    return time;
+
   guint64 unsigned_time;
   int ret = gst_segment_to_stream_time_full(
     priv->segment, GST_FORMAT_TIME, time, &unsigned_time);
@@ -181,7 +185,7 @@ gpac_pck_new_from_buffer(GstBuffer* buffer,
   }
 
   // Get the fps from the PID
-  GF_Fraction fps = { 30, 1 };
+  GF_Fraction fps = { 1, 1 };
   p = gf_filter_pid_get_property(pid, GF_PROP_PID_FPS);
   if (p)
     fps = p->value.frac;

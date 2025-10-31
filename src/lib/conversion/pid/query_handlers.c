@@ -47,6 +47,11 @@ QUERY_HANDLER_SIGNATURE(duration)
 {
   const GF_PropertyValue* p;
 
+  // For text streams, we do not set duration
+  p = gf_filter_pid_get_property(pid, GF_PROP_PID_STREAM_TYPE);
+  if (p && p->value.uint == GF_STREAM_TEXT)
+    return TRUE;
+
   // Query the duration
   g_autoptr(GstQuery) query = gst_query_new_duration(GST_FORMAT_TIME);
   gboolean ret = gst_pad_peer_query(priv->self, query);

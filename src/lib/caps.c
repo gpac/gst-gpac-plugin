@@ -29,7 +29,6 @@ GstGpacFormatProp gst_gpac_sink_formats = {
   .video_caps = GST_STATIC_CAPS(AV1_CAPS "; " H264_CAPS "; " H265_CAPS),
   .audio_caps = GST_STATIC_CAPS(AAC_CAPS "; " EAC3_CAPS),
   .subtitle_caps = GST_STATIC_CAPS(TEXT_UTF8),
-  .caption_caps = GST_STATIC_CAPS(CEA708_CAPS),
 };
 
 GstPadTemplate* sink_templates[4] = { NULL };
@@ -65,8 +64,6 @@ gpac_install_sink_pad_templates(GstElementClass* klass)
   gst_element_class_add_pad_template(klass,
                                      sink_templates[GPAC_TEMPLATE_AUDIO]);
 
-  // NOLINTNEXTLINE
-#if 0 // FIXME: Subtitle and caption support has not been tested yet
   // Subtitle pad template
   if (sink_templates[GPAC_TEMPLATE_SUBTITLE] == NULL) {
     sink_templates[GPAC_TEMPLATE_SUBTITLE] = gst_pad_template_new(
@@ -75,18 +72,8 @@ gpac_install_sink_pad_templates(GstElementClass* klass)
       GST_PAD_REQUEST,
       gst_static_caps_get(&gst_gpac_sink_formats.subtitle_caps));
   }
-  gst_element_class_add_pad_template(klass, sink_templates[GPAC_TEMPLATE_SUBTITLE]);
-
-  // Caption pad template
-  if (sink_templates[GPAC_TEMPLATE_CAPTION] == NULL) {
-    sink_templates[GPAC_TEMPLATE_CAPTION] = gst_pad_template_new(
-      "caption_%u",
-      GST_PAD_SINK,
-      GST_PAD_REQUEST,
-      gst_static_caps_get(&gst_gpac_sink_formats.caption_caps));
-  }
-  gst_element_class_add_pad_template(klass, sink_templates[GPAC_TEMPLATE_CAPTION]);
-#endif
+  gst_element_class_add_pad_template(klass,
+                                     sink_templates[GPAC_TEMPLATE_SUBTITLE]);
 }
 
 GstStaticPadTemplate gst_gpac_src_template =

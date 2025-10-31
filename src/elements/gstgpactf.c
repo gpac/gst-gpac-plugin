@@ -773,23 +773,22 @@ gst_gpac_tf_create_new_pad(GstAggregator* element,
   gchar* name;
   gint pad_id;
 
-#define TEMPLATE_CHECK(prefix, count_field)                                 \
-  if (templ == gst_element_class_get_pad_template(klass, prefix "_%u")) {   \
-    agg->count_field++;                                                     \
-    if (pad_name != NULL && sscanf(pad_name, prefix "_%u", &pad_id) == 1) { \
-      name = g_strdup(pad_name);                                            \
-    } else {                                                                \
-      pad_id = agg->audio_pad_count + agg->video_pad_count +                \
-               agg->subtitle_pad_count + agg->caption_pad_count;            \
-      name = g_strdup_printf(prefix "_%u", pad_id);                         \
-    }                                                                       \
+#define TEMPLATE_CHECK(prefix, count_field)                                    \
+  if (templ == gst_element_class_get_pad_template(klass, prefix "_%u")) {      \
+    agg->count_field++;                                                        \
+    if (pad_name != NULL && sscanf(pad_name, prefix "_%u", &pad_id) == 1) {    \
+      name = g_strdup(pad_name);                                               \
+    } else {                                                                   \
+      pad_id =                                                                 \
+        agg->audio_pad_count + agg->video_pad_count + agg->subtitle_pad_count; \
+      name = g_strdup_printf(prefix "_%u", pad_id);                            \
+    }                                                                          \
   } else
 
   // Check the pad template and decide the pad name
   TEMPLATE_CHECK("video", video_pad_count)
   TEMPLATE_CHECK("audio", audio_pad_count)
   TEMPLATE_CHECK("subtitle", subtitle_pad_count)
-  TEMPLATE_CHECK("caption", caption_pad_count)
   {
     GST_ELEMENT_WARNING(
       agg, STREAM, FAILED, (NULL), ("This is not our template!"));

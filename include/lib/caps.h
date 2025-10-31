@@ -75,9 +75,6 @@
   "text/x-raw, " \
   "format=(string)utf8"
 
-#define CEA708_CAPS \
-  "closedcaption/x-cea-708, format=(string)cdp"
-
 #define QT_CAPS "video/quicktime"
 
 #define QT_CMAF_CAPS \
@@ -94,7 +91,6 @@ typedef struct
   GstStaticCaps video_caps;
   GstStaticCaps audio_caps;
   GstStaticCaps subtitle_caps;
-  GstStaticCaps caption_caps;
 } GstGpacFormatProp;
 
 typedef enum
@@ -102,7 +98,6 @@ typedef enum
   GPAC_TEMPLATE_VIDEO,
   GPAC_TEMPLATE_AUDIO,
   GPAC_TEMPLATE_SUBTITLE,
-  GPAC_TEMPLATE_CAPTION,
 } GstGpacSinkTemplateType;
 
 /*! Get the sink pad template for the given type

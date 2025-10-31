@@ -64,7 +64,6 @@ struct _GstGpacTransform
   guint32 video_pad_count;
   guint32 audio_pad_count;
   guint32 subtitle_pad_count;
-  guint32 caption_pad_count;
 
   /* Input Queue */
   GQueue* queue;
