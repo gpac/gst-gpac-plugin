@@ -218,21 +218,21 @@ gpac_memio_assign_queue(GPAC_SessionContext* sess,
 }
 
 void
-gpac_memio_set_eos(GPAC_SessionContext* sess, gboolean eos)
+gpac_memio_set_eos(GPAC_SessionContext* sess, GF_FilterPid* pid)
 {
   if (!sess->memin)
     return;
 
-  GPAC_MemIoContext* rt_udta = gf_filter_get_rt_udta(sess->memin);
-  if (!rt_udta) {
-    GST_ELEMENT_ERROR(sess->element,
-                      LIBRARY,
-                      FAILED,
-                      (NULL),
-                      ("Failed to get runtime user data"));
-    return;
+  // Set the EOS flag on the specific PID if provided
+  if (pid) {
+    gf_filter_pid_set_eos(pid);
+  } else {
+    // Set the EOS flag on all PIDs
+    for (u32 i = 0; i < gf_filter_get_opid_count(sess->memin); i++) {
+      GF_FilterPid* opid = gf_filter_get_opid(sess->memin, i);
+      gf_filter_pid_set_eos(opid);
+    }
   }
-  rt_udta->eos = eos;
 }
 
 gboolean
@@ -382,14 +382,6 @@ gpac_default_memin_process_cb(GF_Filter* filter)
   GF_FilterPacket* packet = NULL;
   while ((packet = g_queue_pop_head(ctx->queue)))
     gf_filter_pck_send(packet);
-
-  // All packets are sent, check if the EOS is set
-  if (ctx->eos) {
-    // Set the EOS on all output PIDs
-    for (guint i = 0; i < gf_filter_get_opid_count(filter); i++)
-      gf_filter_pid_set_eos(gf_filter_get_opid(filter, i));
-    return GF_EOS;
-  }
 
   return GF_OK;
 }

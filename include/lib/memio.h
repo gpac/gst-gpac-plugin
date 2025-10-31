@@ -39,7 +39,6 @@ typedef struct
 {
   // queue should be freed by the caller
   GQueue* queue;
-  gboolean eos;
   GPAC_MemIoDirection dir;
   GPAC_SessionContext* sess;
 
@@ -118,10 +117,11 @@ gpac_memio_assign_queue(GPAC_SessionContext* sess,
 
 /*! sets the end of stream flag of the memory input filter
     \param[in] sess the session context
-    \param[in] eos the end of stream flag
+    \param[in] pid the pid to set the eos flag for, if NULL, sets the eos flag
+   for all pids
 */
 void
-gpac_memio_set_eos(GPAC_SessionContext* sess, gboolean eos);
+gpac_memio_set_eos(GPAC_SessionContext* sess, GF_FilterPid* pid);
 
 /*! sets the caps of the memory output filter
     \param[in] sess the session context

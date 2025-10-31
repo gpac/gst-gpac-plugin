@@ -469,6 +469,10 @@ gst_gpac_tf_sink_event(GstAggregator* agg,
 
     case GST_EVENT_EOS: {
       // Set this pad as EOS
+      GF_FilterPid* pid = NULL;
+      g_object_get(GST_AGGREGATOR_PAD(pad), "pid", &pid, NULL);
+      g_assert(pid != NULL);
+      gpac_memio_set_eos(GPAC_SESS_CTX(GPAC_CTX), pid);
       priv->eos = TRUE;
 
       // Are all pads EOS?
@@ -490,7 +494,6 @@ gst_gpac_tf_sink_event(GstAggregator* agg,
 
       // If all pads are EOS, send EOS to the source
       GST_DEBUG_OBJECT(agg, "All pads are EOS, sending EOS to GPAC");
-      gpac_memio_set_eos(GPAC_SESS_CTX(GPAC_CTX), TRUE);
       gpac_session_run(GPAC_SESS_CTX(GPAC_CTX), TRUE);
       gst_gpac_tf_consume(agg, GST_EVENT_TYPE(event) == GST_EVENT_EOS);
       break;
@@ -996,7 +999,7 @@ gst_gpac_tf_stop(GstAggregator* aggregator)
   gst_gpac_tf_reset(gpac_tf);
 
   // Abort the session
-  gpac_memio_set_eos(GPAC_SESS_CTX(GPAC_CTX), TRUE);
+  gpac_memio_set_eos(GPAC_SESS_CTX(GPAC_CTX), NULL);
   gpac_session_abort(GPAC_SESS_CTX(GPAC_CTX));
 
   // Close the session
