@@ -853,8 +853,12 @@ gst_gpac_tf_reset(GstGpacTransform* tf)
   gst_iterator_free(pad_iter);
 
   // Empty the queue
-  if (tf->queue)
-    g_queue_clear_full(tf->queue, (GDestroyNotify)gf_filter_pck_unref);
+  if (tf->queue) {
+    if (!g_queue_is_empty(tf->queue))
+      GST_ERROR_OBJECT(tf,
+                       "GPAC queue not empty during reset, pipeline error?");
+    g_queue_clear(tf->queue);
+  }
 }
 
 static gboolean
@@ -995,9 +999,6 @@ gst_gpac_tf_stop(GstAggregator* aggregator)
     G_OBJECT(element), GST_TYPE_GPAC_TF, GstGpacTransformClass));
   GstGpacParams* params = GST_GPAC_GET_PARAMS(klass);
 
-  // Reset the element
-  gst_gpac_tf_reset(gpac_tf);
-
   // Abort the session
   gpac_memio_set_eos(GPAC_SESS_CTX(GPAC_CTX), NULL);
   gpac_session_abort(GPAC_SESS_CTX(GPAC_CTX));
@@ -1009,6 +1010,9 @@ gst_gpac_tf_stop(GstAggregator* aggregator)
       element, LIBRARY, SHUTDOWN, (NULL), ("Failed to close GPAC session"));
     return FALSE;
   }
+
+  // Reset the element
+  gst_gpac_tf_reset(gpac_tf);
 
   // Destroy the GPAC context
   gpac_destroy(GPAC_CTX);
