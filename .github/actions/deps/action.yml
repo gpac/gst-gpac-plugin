@@ -77,9 +77,8 @@ runs:
       shell: bash
       run: |
         if [[ ${{ runner.os }} == 'macOS' ]]; then
-          brew install cargo-c meson
+          brew install cargo-c
         else
-          sudo apt-get install -y python3 python3-pip python3-setuptools python3-wheel python3-mesonpy ninja-build
           cargo install cargo-c
         fi
 
@@ -100,19 +99,19 @@ runs:
       if: inputs.for-test == 'true' && steps.cache-gst.outputs.cache-hit != 'true'
       shell: bash
       working-directory: ${{ runner.temp }}/gst-plugins-rs
-      run: |
-        meson setup build -Dauto_features=disabled -Dfmp4=enabled
-        meson compile -C build
+      run: cargo cbuild -p gst-plugin-isobmff --release
 
     - name: Install cmafmux element
       if: inputs.for-test == 'true'
       shell: bash
-      working-directory: ${{ runner.temp }}/gst-plugins-rs/build/plugins
+      working-directory: ${{ runner.temp }}/gst-plugins-rs
       run: |
         dst_dir=$HOME/.local/share/gstreamer-1.0/plugins
         mkdir -p $dst_dir
         if [[ ${{ runner.os }} == 'macOS' ]]; then
-          cp libgstfmp4.dylib $dst_dir/
+          cd target/aarch64-apple-darwin/release
+          cp libgstisobmff.dylib $dst_dir/
         else
-          cp libgstfmp4.so $dst_dir/
+          cd target/x86_64-unknown-linux-gnu/release
+          cp libgstisobmff.so $dst_dir/
         fi
