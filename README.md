@@ -31,7 +31,7 @@ This is again a convenience element that functions similarly to `gpactf` element
 
 ### Other noteworthy elements
 
-- **`gpachlssink`**: This element is a sink for HLS streams. It can be used to create HLS playlists and segments.
+- **`gpachlssink`**: This element is a sink for HLS streams. It can be used to create HLS playlists and segments. It only write into [GStreamer Signals](https://gstreamer.freedesktop.org/documentation/plugin-development/basics/signals.html).
 - **`gpactsmx`**: This element is a sink for TS streams. It can be used to create MPEG-TS segments.
 
 ## Installation
@@ -52,6 +52,10 @@ cmake --build build
 ## Usage
 
 Refer to the launch tasks in [`.vscode/launch.json`](.vscode/launch.json) for examples of how to use the plugin. Each launch configuration builds the plugin and runs a GStreamer pipeline that utilizes it. After the session is completed, the pipeline graphs are dumped to `graph` folder.
+
+## Debug
+
+Add `GST_DEBUG=3` to see the GPAC logs.
 
 ## Contributing
 
