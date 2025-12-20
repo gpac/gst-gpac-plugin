@@ -55,7 +55,7 @@ Refer to the launch tasks in [`.vscode/launch.json`](.vscode/launch.json) for ex
 
 ## Debug
 
-Add `GST_DEBUG=3` to see the GPAC logs.
+Add `GST_DEBUG=3` to see the GPAC logs. You can filter more specifically logs with the following syntax: `GST_DEBUG=2,gpac*=4` for log level 2 for anything and 4 for anything GPAC.
 
 ## Contributing
 
