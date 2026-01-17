@@ -106,6 +106,8 @@ gst_gpac_tf_pad_finalize(GObject* object)
       gst_segment_free(priv->segment);
     if (priv->tags)
       gst_tag_list_unref(priv->tags);
+    if (priv->gpac_caps)
+      g_list_free_full(priv->gpac_caps, (GDestroyNotify)g_free);
     g_free(priv);
     gst_pad_set_element_private(GST_PAD(pad), NULL);
   }
@@ -204,6 +206,7 @@ gpac_prepare_pids(GstElement* element)
   GValue item = G_VALUE_INIT;
   gboolean done = FALSE;
   gboolean ret = FALSE;
+  gboolean caps_changed = FALSE;
 
   // Track configuration status
   GHashTable* pids_before_reset =
@@ -244,6 +247,7 @@ gpac_prepare_pids(GstElement* element)
             goto fail;
           }
           priv->flags = 0;
+          caps_changed |= priv->caps_changed;
         }
 
         // Track the PID
@@ -269,6 +273,52 @@ gpac_prepare_pids(GstElement* element)
         done = TRUE;
         ret = TRUE;
         break;
+    }
+  }
+
+  // If caps changed, re-iterate over the pads to build the filter caps again
+  if (caps_changed) {
+    GF_Filter* memin = GPAC_SESS_CTX(GPAC_CTX)->memin;
+    g_assert(memin != NULL);
+    gf_filter_override_caps(memin, NULL, 0);
+    pad_iter = gst_element_iterate_sink_pads(element);
+    done = FALSE;
+    while (!done) {
+      switch (gst_iterator_next(pad_iter, &item)) {
+        case GST_ITERATOR_OK: {
+          GstPad* pad = g_value_get_object(&item);
+          GstAggregatorPad* agg_pad = GST_AGGREGATOR_PAD(pad);
+          GpacPadPrivate* priv = gst_pad_get_element_private(pad);
+
+          // Get the PID
+          GF_FilterPid* pid = NULL;
+          g_object_get(agg_pad, "pid", &pid, NULL);
+          if (pid == NULL)
+            continue;
+
+          // Start a new caps bundle
+          for (GList* l = priv->gpac_caps; l != NULL; l = l->next) {
+            GF_FilterCapability* cap = l->data;
+            gf_filter_push_caps(
+              memin, cap->code, &cap->val, NULL, GF_CAPS_OUTPUT, 0);
+          }
+          gf_filter_push_caps(memin, 0, NULL, NULL, 0, 0);
+
+          priv->caps_changed = FALSE;
+          g_value_reset(&item);
+          break;
+        }
+        case GST_ITERATOR_RESYNC:
+          gst_iterator_resync(pad_iter);
+          break;
+        case GST_ITERATOR_ERROR:
+          GST_ELEMENT_ERROR(
+            element, STREAM, FAILED, (NULL), ("Failed to iterate over pads"));
+          goto fail;
+        case GST_ITERATOR_DONE:
+          done = TRUE;
+          break;
+      }
     }
   }
 

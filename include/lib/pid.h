@@ -67,6 +67,10 @@ typedef struct
   guint64 idr_period;
   guint64 idr_last;
   guint64 idr_next;
+
+  // Capabilities required for the PID
+  GList* gpac_caps;
+  gboolean caps_changed;
 } GpacPadPrivate;
 
 #define GPAC_PID_PROP_IMPL_ARGS_NO_ELEMENT \

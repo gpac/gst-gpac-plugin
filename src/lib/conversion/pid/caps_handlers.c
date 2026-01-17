@@ -43,6 +43,31 @@
   gchar* media = media_type_parts[0];                                   \
   gchar* codec = media_type_parts[1];
 
+void
+gpac_push_capability(GpacPadPrivate* priv, u32 code, GF_PropertyValue* val)
+{
+  for (GList* l = priv->gpac_caps; l != NULL; l = l->next) {
+    GF_FilterCapability* cap = l->data;
+    if (cap->code == code) {
+      // Check if the value is the same
+      if (!gf_props_equal(&cap->val, val))
+        priv->caps_changed = TRUE;
+
+      // Update existing capability
+      cap->val = *val;
+      return;
+    }
+  }
+
+  // Add new capability
+  GF_FilterCapability* new_cap = g_new0(GF_FilterCapability, 1);
+  new_cap->code = code;
+  new_cap->val = *val;
+  new_cap->flags = GF_CAPS_OUTPUT;
+  priv->gpac_caps = g_list_append(priv->gpac_caps, new_cap);
+  priv->caps_changed = TRUE;
+}
+
 //
 // Default Caps handlers
 //
@@ -69,6 +94,9 @@ CAPS_HANDLER_SIGNATURE(stream_type)
     if (!g_strcmp0(subtype, "avc") || !g_strcmp0(subtype, "hev1"))
       SET_PROP(GF_PROP_PID_ISOM_SUBTYPE, PROP_STRING(subtype));
   }
+
+  // Push the caps with the codecid property
+  gpac_push_capability(priv, GF_PROP_PID_STREAM_TYPE, &PROP_UINT(stream_type));
 
   // Set the stream type
   SET_PROP(GF_PROP_PID_STREAM_TYPE, PROP_UINT(stream_type));
@@ -112,6 +140,9 @@ CAPS_HANDLER_SIGNATURE(codec_id)
   }
 
 finish:
+  // Push the caps with the codecid property
+  gpac_push_capability(priv, GF_PROP_PID_CODECID, &PROP_UINT(codec_id));
+
   // Set the codec id
   SET_PROP(GF_PROP_PID_CODECID, PROP_UINT(codec_id));
   return TRUE;
@@ -144,13 +175,7 @@ CAPS_HANDLER_SIGNATURE(unframed)
   //* allow framed data and explicitly load "unframer" in gpac.
 
   // Push the caps with the unframed property
-  gf_filter_override_caps(gf_filter_pid_get_owner(pid), NULL, 0);
-  gf_filter_push_caps(gf_filter_pid_get_owner(pid),
-                      GF_PROP_PID_UNFRAMED,
-                      &PROP_BOOL(!framed),
-                      NULL,
-                      GF_CAPS_OUTPUT,
-                      0);
+  gpac_push_capability(priv, GF_PROP_PID_UNFRAMED, &PROP_BOOL(!framed));
 
   // Set the unframed property
   SET_PROP(GF_PROP_PID_UNFRAMED, PROP_BOOL(!framed));
