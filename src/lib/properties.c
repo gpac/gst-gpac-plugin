@@ -154,6 +154,7 @@ gpac_install_filter_properties(GObjectClass* gobject_class,
                                GList* blacklist,
                                const gchar* filter_name)
 {
+  gf_sys_init(GF_MemTrackerNone, NULL);
   GF_FilterSession* session = gf_fs_new_defaults(0U);
   guint num_filters = gf_fs_filters_registers_count(session);
 
@@ -170,6 +171,7 @@ gpac_install_filter_properties(GObjectClass* gobject_class,
     filter = NULL;
   }
   gf_fs_del(session);
+  gf_sys_close();
   g_assert(filter);
 
   guint option_idx = 0;
