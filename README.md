@@ -10,6 +10,10 @@ This plugin is dual-licensed AGPL or commercial. Contact [Motion Spell](https://
 
 ## Elements
 
+### `gpaccmafmux` element
+
+The `gpaccmafmux` element is a drop-in replacement to GStreamer's `cmafmux` element. It's the perfect place to transition to GPAC if you already use GStreamer's CMAF muxer.
+
 ### `gpactf` element
 
 The `gpactf` element is an aggregator element that runs the incoming buffers through the GPAC Filter Session. The element provides a `graph` option for you to specify the GPAC filter graph to use. Make sure to read the [Filters Concepts](https://wiki.gpac.io/Filters/filters_general/) page on the GPAC wiki to understand how to create filter graphs.
