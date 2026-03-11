@@ -46,6 +46,7 @@
 QUERY_HANDLER_SIGNATURE(duration)
 {
   const GF_PropertyValue* p;
+  gint64 duration = -1;
 
   // For text streams, we do not set duration
   p = gf_filter_pid_get_property(pid, GF_PROP_PID_STREAM_TYPE);
@@ -56,14 +57,10 @@ QUERY_HANDLER_SIGNATURE(duration)
   g_autoptr(GstQuery) query = gst_query_new_duration(GST_FORMAT_TIME);
   gboolean ret = gst_pad_peer_query(priv->self, query);
   if (!ret) {
-    GST_ELEMENT_ERROR(
-      element, LIBRARY, FAILED, (NULL), ("Failed to query duration"));
-    return FALSE;
+    GST_ERROR("Failed to query duration");
+  } else {
+    gst_query_parse_duration(query, NULL, &duration);
   }
-
-  // Parse the duration
-  gint64 duration;
-  gst_query_parse_duration(query, NULL, &duration);
 
   // Get the fps from the PID
   GF_Fraction fps = { 30, 1 };
