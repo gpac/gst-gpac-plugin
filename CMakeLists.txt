@@ -10,7 +10,7 @@ if(APPLE)
   endif()
 endif()
 
-project(gpac_plugin VERSION 0.2.3 LANGUAGES C) # x-release-please-version
+project(gpac_plugin VERSION 0.2.4 LANGUAGES C) # x-release-please-version
 
 # Options
 option(ENABLE_TESTS "Enable and build tests" OFF)
