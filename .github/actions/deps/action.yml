@@ -26,10 +26,13 @@ runs:
           sudo tee /etc/apt/sources.list.d/gpac.list > /dev/null
         sudo apt-get update
         sudo apt-get install -y libgpac-dev
+
     - name: Install GPAC on macOS
       shell: bash
       if: runner.os == 'macOS'
-      run: brew install --head gpac
+      run: |
+        git clone --depth 1 https://github.com/gpac/gpac.git
+        cd gpac && ./configure && make -j$(nproc) && sudo make install
 
     - name: Install GStreamer on Linux
       shell: bash
@@ -40,7 +43,7 @@ runs:
 
     - name: Set up Homebrew
       if: runner.os == 'macOS'
-      uses: Homebrew/actions/setup-homebrew@a3c8a0854142dbf3bade2bf77d5c26855a243034
+      uses: Homebrew/actions/setup-homebrew@4cdec6dc3e14702214632b392c91a7cc283fbc8a
 
     - name: Install GStreamer on macOS
       shell: bash
@@ -70,7 +73,7 @@ runs:
 
     - name: Install Rust
       if: inputs.for-test == 'true' && steps.cache-gst.outputs.cache-hit != 'true'
-      uses: dtolnay/rust-toolchain@38b70195107dddab2c7bbd522bcf763bac00963b
+      uses: dtolnay/rust-toolchain@stable
 
     - name: Install build dependencies
       if: inputs.for-test == 'true' && steps.cache-gst.outputs.cache-hit != 'true'
@@ -92,7 +95,9 @@ runs:
           git clean -fdx
           git pull
         else
-          git clone --depth 1 https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs.git
+          # Last commit to use v1.24.0 as minimum supported GStreamer version
+          COMMIT=3dcc47e94aa8c880ab8ca2363f7c0e7bf93be6f4
+          git clone --depth 1 --revision $COMMIT https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs.git
         fi
 
     - name: Compile cmafmux element
