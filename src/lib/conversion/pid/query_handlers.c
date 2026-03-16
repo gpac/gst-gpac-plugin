@@ -61,8 +61,6 @@ QUERY_HANDLER_SIGNATURE(duration)
       return TRUE; // not an error, just skip setting duration
   }
   
-  gst_query_parse_duration(query, NULL, &duration);
-
   // Parse the duration
   gint64 duration;
   gst_query_parse_duration(query, NULL, &duration);
