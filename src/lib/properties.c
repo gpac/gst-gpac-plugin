@@ -30,9 +30,9 @@
 typedef struct
 {
   const gchar* name;
-  gboolean is_simple; // if true, treat as "-arg" instead of "--arg=..."
+  gboolean has_value; // if true, treat as "-arg=<value>" instead of "-arg"
 } GPAC_Arg;
-#define GPAC_DEF_ARG(name, is_simple) { name, is_simple }
+#define GPAC_DEF_ARG(name, has_value) { name, has_value }
 
 // Define the override properties
 static GF_GPACArg override_properties[] = {
@@ -41,23 +41,25 @@ static GF_GPACArg override_properties[] = {
 
 // Define the visible properties with their default values
 static GPAC_Arg visible_properties[] = {
-  GPAC_DEF_ARG("for-test", TRUE),
-  GPAC_DEF_ARG("old-arch", TRUE),
-  GPAC_DEF_ARG("strict-error", TRUE),
-  GPAC_DEF_ARG("broken-cert", TRUE),
+  GPAC_DEF_ARG("for-test", FALSE),
+  GPAC_DEF_ARG("old-arch", FALSE),
+  GPAC_DEF_ARG("strict-error", FALSE),
+  GPAC_DEF_ARG("broken-cert", FALSE),
+  GPAC_DEF_ARG("full-link", FALSE),
+  GPAC_DEF_ARG("sched", TRUE),
   { 0 },
 };
 
 void
 gpac_get_property_attributes(GParamSpec* pspec,
-                             gboolean* is_simple,
+                             gboolean* has_value,
                              gboolean* is_visible)
 {
   *is_visible = FALSE;
-  *is_simple = FALSE;
+  *has_value = FALSE;
   for (u32 i = 0; visible_properties[i].name; i++) {
     if (!g_strcmp0(g_param_spec_get_name(pspec), visible_properties[i].name)) {
-      *is_simple = visible_properties[i].is_simple;
+      *has_value = visible_properties[i].has_value;
       *is_visible = TRUE;
       break;
     }
@@ -284,16 +286,14 @@ gpac_install_global_properties(GObjectClass* gobject_class)
         g_object_class_install_property(
           gobject_class,
           i,
-          prop->is_simple ? g_param_spec_boolean(arg->name,
-                                                 arg->name,
-                                                 arg->description,
-                                                 FALSE,
-                                                 G_PARAM_READWRITE)
-                          : g_param_spec_string(arg->name,
-                                                arg->name,
-                                                arg->description,
-                                                NULL,
-                                                G_PARAM_READWRITE));
+          prop->has_value
+            ? g_param_spec_string(
+                arg->name, arg->name, arg->description, NULL, G_PARAM_READWRITE)
+            : g_param_spec_boolean(arg->name,
+                                   arg->name,
+                                   arg->description,
+                                   FALSE,
+                                   G_PARAM_READWRITE));
         break;
       }
     }
@@ -357,9 +357,9 @@ gpac_set_property(GPAC_PropertyContext* ctx,
     g_free(param);
     return TRUE;
   } else if (IS_GLOBAL_PROPERTY(property_id)) {
-    // Check if the property is visible and if it is simple
-    gboolean is_simple, is_visible;
-    gpac_get_property_attributes(pspec, &is_simple, &is_visible);
+    // Check if the property is visible and if it has a value
+    gboolean has_value, is_visible;
+    gpac_get_property_attributes(pspec, &has_value, &is_visible);
 
     // If the property is not visible, return
     if (!is_visible)
@@ -367,11 +367,11 @@ gpac_set_property(GPAC_PropertyContext* ctx,
 
     // Add the property to the list
     gchar* property;
-    if (is_simple)
-      property = g_strdup_printf("-%s", g_param_spec_get_name(pspec));
-    else
+    if (has_value)
       property = g_strdup_printf(
-        "--%s=%s", g_param_spec_get_name(pspec), g_value_get_string(value));
+        "-%s=%s", g_param_spec_get_name(pspec), g_value_get_string(value));
+    else
+      property = g_strdup_printf("-%s", g_param_spec_get_name(pspec));
     ctx->properties = g_list_append(ctx->properties, property);
   } else {
     // Unknown property or not handled here
@@ -404,16 +404,16 @@ gpac_get_property(GPAC_PropertyContext* ctx,
         return FALSE;
     }
   } else if (IS_GLOBAL_PROPERTY(property_id)) {
-    gboolean is_simple, is_visible;
-    gpac_get_property_attributes(pspec, &is_simple, &is_visible);
+    gboolean has_value, is_visible;
+    gpac_get_property_attributes(pspec, &has_value, &is_visible);
     g_assert(is_visible);
     const gchar* prop_val =
       gf_sys_find_global_arg(g_param_spec_get_name(pspec));
 
-    if (is_simple)
-      g_value_set_boolean(value, prop_val != NULL);
-    else
+    if (has_value)
       g_value_set_string(value, prop_val);
+    else
+      g_value_set_boolean(value, prop_val != NULL);
   } else if (IS_ELEMENT_PROPERTY(property_id)) {
     // Handled in the element
     return FALSE;
