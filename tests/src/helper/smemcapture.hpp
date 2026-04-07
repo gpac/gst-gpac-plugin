@@ -68,11 +68,13 @@ private:
                                 gpointer user_data)
     {
       auto* cb = static_cast<Callback*>(user_data);
+      auto* basename = g_path_get_basename(label);
 
       auto* mem_stream = g_memory_output_stream_new_resizable();
       cb->stream_labels.emplace_back(
-        std::make_pair(label, G_OUTPUT_STREAM(mem_stream)));
+        std::make_pair(basename, G_OUTPUT_STREAM(mem_stream)));
 
+      g_free(basename);
       return G_OUTPUT_STREAM(mem_stream);
     }
 

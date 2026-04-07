@@ -51,6 +51,7 @@ typedef struct
   gchar* llhas_template;
   gboolean is_manifest;
   guint32 dash_state;
+  gchar* original_dst;
   const gchar* dst; // destination file path
 } DasherCtx;
 
@@ -94,6 +95,7 @@ dasher_ctx_free(void* process_ctx)
     g_free(ctx->llhas_template);
 
   // Free the context
+  g_free(ctx->original_dst);
   g_free(ctx);
 }
 
@@ -119,8 +121,11 @@ dasher_configure_pid(GF_Filter* filter, GF_FilterPid* pid)
   // Get the destination path
   GF_PropertyValue dst;
   Bool found = gf_filter_get_arg(filter, "dst", &dst);
-  if (found)
-    dasher_ctx->dst = g_strdup(dst.value.string);
+  if (found) {
+    if (dasher_ctx->original_dst)
+      g_free(dasher_ctx->original_dst);
+    dasher_ctx->original_dst = g_strdup(dst.value.string);
+  }
 
   GPAC_MemOutPrivateContext* fctx =
     (GPAC_MemOutPrivateContext*)gf_filter_pid_get_alias_udta(pid);
@@ -216,14 +221,24 @@ dasher_open_close_file(GF_Filter* filter,
   if (!name)
     return; // No file to open
 
+  // Create a new file
+  *file = g_new0(FileAbstract, 1);
+
+  g_assert(dasher_ctx->original_dst);
+  gchar* base_dir = g_path_get_dirname(dasher_ctx->original_dst);
+  gchar* canonical_base_dir = g_path_is_absolute(base_dir)
+                                ? g_strdup(base_dir)
+                                : g_canonicalize_filename(base_dir, NULL);
+  (*file)->name = g_path_is_absolute(name)
+                    ? g_strdup(name)
+                    : g_canonicalize_filename(name, canonical_base_dir);
+  g_free(canonical_base_dir);
+  g_free(base_dir);
+
   GST_TRACE_OBJECT(io_ctx->sess->element,
                    "Opening new file for PID %s: %s",
                    gf_filter_pid_get_name(pid),
-                   name);
-
-  // Create a new file
-  *file = g_new0(FileAbstract, 1);
-  (*file)->name = g_strdup(name);
+                   (*file)->name);
 
   // Decide on the file flags
   gboolean has_os = FALSE;
@@ -286,7 +301,6 @@ dasher_setup_file(GF_Filter* filter, GF_FilterPid* pid)
   GPAC_MemOutPIDContext* ctx =
     (GPAC_MemOutPIDContext*)gf_filter_pid_get_udta(pid);
   DasherCtx* dasher_ctx = (DasherCtx*)ctx->private_ctx;
-  const char* dst = dasher_ctx->dst;
 
   const GF_PropertyValue* p =
     gf_filter_pid_get_property(pid, GF_PROP_PID_OUTPATH);
