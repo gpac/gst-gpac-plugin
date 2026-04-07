@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.5](https://github.com/gpac/gst-gpac-plugin/compare/v0.2.4...v0.2.5) (2026-04-07)
+
+
+### Features
+
+* add "full-link" and "sched" to global options ([e876e80](https://github.com/gpac/gst-gpac-plugin/commit/e876e80f16e191c11098e3e2d8c55f381f6fb6fa))
+
+
+### Bug Fixes
+
+* gpacsink default output stream should respect destination ([8822e39](https://github.com/gpac/gst-gpac-plugin/commit/8822e39cfdf0a4a49493b93098da5c8b2bec46a2))
+
 ## [0.2.4](https://github.com/gpac/gst-gpac-plugin/compare/v0.2.3...v0.2.4) (2026-03-11)
 
 
