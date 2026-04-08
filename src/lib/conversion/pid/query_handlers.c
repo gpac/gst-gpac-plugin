@@ -56,11 +56,11 @@ QUERY_HANDLER_SIGNATURE(duration)
   g_autoptr(GstQuery) query = gst_query_new_duration(GST_FORMAT_TIME);
   gboolean ret = gst_pad_peer_query(priv->self, query);
   if (!ret) {
-    GST_ELEMENT_ERROR(
-      element, LIBRARY, FAILED, (NULL), ("Failed to query duration"));
-    return FALSE;
+      GST_WARNING("No segment event and duration query failed, "
+                  "skipping duration property (possibly live source)");
+      return TRUE; // not an error, just skip setting duration
   }
-
+  
   // Parse the duration
   gint64 duration;
   gst_query_parse_duration(query, NULL, &duration);
